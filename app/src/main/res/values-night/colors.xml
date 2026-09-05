@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Same eight hues, stepped for the dark surface (see dataviz palette reference) -->
+    <color name="chart_slot_1">#3987E5</color>
+    <color name="chart_slot_2">#D95926</color>
+    <color name="chart_slot_3">#199E70</color>
+    <color name="chart_slot_4">#C98500</color>
+    <color name="chart_slot_5">#D55181</color>
+    <color name="chart_slot_6">#008300</color>
+    <color name="chart_slot_7">#9085E9</color>
+    <color name="chart_slot_8">#E66767</color>
+</resources>

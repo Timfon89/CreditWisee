@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="28dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_gradient_header"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="56dp"
+            android:paddingBottom="34dp">
+
+            <TextView
+                android:id="@+id/tvAvatar"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_score_badge"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:alpha="0.85"
+                android:text="@string/profile_local_account"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin"
+            android:layout_marginTop="-18dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/profile_cases_count" />
+                    <TextView android:id="@+id/tvCasesCount" style="@style/Widget.CreditWise.MetricValue" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/profile_bonus_points" />
+                    <TextView android:id="@+id/tvBonusPoints" style="@style/Widget.CreditWise.MetricValue" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/profile_last_index" />
+                    <TextView android:id="@+id/tvLastIndex" style="@style/Widget.CreditWise.MetricValue" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/profile_employment" />
+                    <TextView
+                        android:id="@+id/tvEmployment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView style="@style/Widget.CreditWise.SectionTitle" android:text="@string/profile_theme_title" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin">
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/themeToggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnThemeSystem"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:text="@string/profile_theme_system" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnThemeLight"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:text="@string/profile_theme_light" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnThemeDark"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checkable="true"
+                    android:text="@string/profile_theme_dark" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView style="@style/Widget.CreditWise.SectionTitle" android:text="@string/profile_about_title" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_disclaimer"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?android:attr/textColorSecondary" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenSite"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin"
+            android:layout_marginTop="@dimen/gap_l"
+            android:text="@string/welcome_open_site" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin"
+            android:layout_marginTop="@dimen/gap_s"
+            android:text="@string/home_logout" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

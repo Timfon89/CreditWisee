@@ -1,0 +1,240 @@
+<resources>
+    <string name="app_name">CreditWise</string>
+
+    <!-- ==== TODO: замените на реальный адрес сайта кредитного рейтинга, когда он будет ==== -->
+    <string name="rating_site_url">https://example.com/</string>
+
+    <!-- Auth (local-only account) -->
+    <string name="auth_tab_login">Вход</string>
+    <string name="auth_tab_register">Регистрация</string>
+    <string name="auth_email_hint">Email</string>
+    <string name="auth_password_hint">Пароль</string>
+    <string name="auth_or">или</string>
+    <string name="auth_google">Продолжить с Google</string>
+    <string name="auth_google_unavailable">Вход через Google появится после подключения Firebase к проекту. Пока используйте email и пароль — аккаунт полностью локальный.</string>
+    <string name="auth_disclaimer">Аккаунт хранится только на этом устройстве (пароль — в виде хеша), это учебный проект без сервера. Данные никуда не передаются.</string>
+    <string name="auth_error_fields">Введите email и пароль (минимум 4 символа)</string>
+    <string name="auth_error_exists">Пользователь с таким email уже зарегистрирован — попробуйте войти</string>
+    <string name="auth_error_not_found">Пользователь не найден — зарегистрируйтесь</string>
+    <string name="auth_error_wrong_password">Неверный пароль</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Кредиты</string>
+    <string name="nav_explain">Разбор</string>
+    <string name="nav_quests">Задания</string>
+    <string name="nav_profile">Профиль</string>
+    <string name="back_to_home">‹ Назад к списку кредитов</string>
+    <string name="forecast_title">Прогноз по темпу трат</string>
+    <string name="forecast_help">Ориентировочный прогноз по вашему обычному темпу трат за последнюю выписку — на сам индекс он не влияет.</string>
+    <string name="forecast_balance_hint">Текущий остаток на карте</string>
+    <string name="forecast_runway_suffix">дн. хватит</string>
+    <string name="forecast_runway_headline_ok">При вашем обычном темпе трат остатка хватит примерно на %1$d дн.</string>
+    <string name="forecast_runway_headline_low">Осторожно: при вашем обычном темпе трат остатка хватит всего на %1$d дн.</string>
+    <string name="forecast_runway_headline_cap">При вашем обычном темпе трат остатка хватит больше чем на %1$d дн. — отличный запас</string>
+    <string name="forecast_runway_empty">Введите остаток на карте, чтобы увидеть, на сколько дней его хватит</string>
+    <string name="forecast_week">К концу недели, если тратить в привычном темпе: ≈ %1$s</string>
+    <string name="forecast_month">К концу месяца при том же темпе: ≈ %1$s</string>
+    <string name="forecast_empty">Пройдите оценку хотя бы один раз, чтобы увидеть прогноз по темпу трат.</string>
+    <string name="forecast_dominant_warn">«%1$s» — %2$s от дохода за этот период. На индекс это прямо сейчас не влияет, но такая концентрация в необязательной категории обычно снижает «Долю трат на необходимое» при следующей оценке.</string>
+    <string name="forecast_dominant_ok">Расходы распределены равномерно, ни одна необязательная категория не выделяется.</string>
+    <string name="home_forecast_teaser">Прогноз по темпу трат</string>
+
+    <!-- Explain (score breakdown) tab -->
+    <string name="explain_title">Разбор балла</string>
+    <string name="explain_empty">Пока нет ни одной оценки — завершите первую на вкладке «Кредиты», и здесь появится подробный разбор.</string>
+    <string name="explain_date">Оценка от %1$s</string>
+
+    <!-- Profile tab -->
+    <string name="profile_local_account">Локальный аккаунт на этом устройстве</string>
+    <string name="profile_cases_count">Всего оценок</string>
+    <string name="profile_bonus_points">Бонусные баллы за задания</string>
+    <string name="profile_last_index">Последний индекс</string>
+    <string name="profile_employment">Тип занятости</string>
+    <string name="profile_about_title">Об этом приложении</string>
+    <string name="profile_theme_title">Тема оформления</string>
+    <string name="profile_theme_system">Системная</string>
+    <string name="profile_theme_light">Светлая</string>
+    <string name="profile_theme_dark">Тёмная</string>
+
+    <!-- Home dashboard -->
+    <string name="home_title">Мои кредиты</string>
+    <string name="home_logout">Выйти из аккаунта</string>
+    <string name="home_empty_title">Пока нет ни одной оценки</string>
+    <string name="home_empty_body">Нажмите «+», чтобы загрузить выписку и получить первый индекс благонадёжности.</string>
+    <string name="home_add">Добавить кредит</string>
+    <string name="home_chip_index">Последний индекс</string>
+    <string name="home_chip_total">Оценок всего</string>
+    <string name="home_chip_bonus">Бонус баллов</string>
+    <string name="home_chip_quest">Задание</string>
+    <string name="home_item_index">Индекс: %1$d</string>
+    <string name="home_item_approval">Индекс благонадёжности: %1$d/100</string>
+    <string name="home_delete">Удалить эту оценку</string>
+    <string name="home_deleted">Оценка удалена</string>
+    <string name="home_undo">Отменить</string>
+
+    <!-- Quests -->
+    <string name="quests_title">Задания на экономию</string>
+    <string name="quests_help">Приложение находит категорию, где вы тратите больше всего сверх необходимого, и предлагает задание — сократить траты на месяц. Выполните — и получите бонус к индексу благонадёжности.</string>
+    <string name="quests_empty">Сначала загрузите хотя бы одну выписку на вкладке «Мои кредиты» — тогда появится задание.</string>
+    <string name="quests_start">Начать задание</string>
+    <string name="quests_active_title">Активное задание</string>
+    <string name="quests_days_left">Осталось дней: %1$d</string>
+    <string name="quests_verify">Проверить повторной выпиской</string>
+    <string name="quests_verify_help">Загрузите новую выписку за прошедший месяц — приложение сравнит траты по категории «%1$s» до и после.</string>
+    <string name="quests_success">Отлично! Траты на «%1$s» снизились на %2$s — начислен бонус +%3$d к индексу благонадёжности.</string>
+    <string name="quests_failed">Пока не получилось снизить траты на «%1$s» так сильно, как планировалось (цель — минус %2$d%%). Попробуйте ещё раз с новым заданием.</string>
+    <string name="quests_bonus_points">Накоплено бонусных баллов: %1$d (учитывается до +%2$d к индексу)</string>
+    <string name="quests_history_title">История заданий</string>
+    <string name="quests_habits_title">Анкета о финансовых привычках</string>
+    <string name="quests_habits_body">6 вопросов о бюджете, долгах и платёжной дисциплине — 2 минуты. Честные ответы могут добавить или снять до %1$d баллов индекса, с объяснением каждого пункта.</string>
+    <string name="quests_habits_start">Пройти анкету</string>
+    <string name="quests_habits_retake">Пройти заново</string>
+    <string name="quests_habits_result">Текущий результат: %1$+d балл(ов)</string>
+    <string name="section_habits_title">Анкета о финансовых привычках</string>
+    <string name="section_habits_body_none">Анкета не пройдена — баллы не начислены и не сняты. Пройти можно во вкладке «Задания».</string>
+
+    <!-- Habits questionnaire -->
+    <string name="habits_title">Анкета о финансовых привычках</string>
+    <string name="habits_disclaimer">Только про деньги — бюджет, долги, платежи. Это не психологический и не личностный тест. Отвечайте честно: эффект на индекс ограничен ±%1$d баллами и виден полностью — ни один ответ не скрыт.</string>
+    <string name="habits_submit">Сохранить ответы</string>
+    <string name="habits_error_incomplete">Ответьте на все вопросы</string>
+    <string name="habits_result_title">Анкета сохранена</string>
+    <string name="habits_result_body">Итоговая корректировка: %1$+d балл(ов) к индексу благонадёжности (учтётся при следующей оценке).</string>
+
+    <!-- Welcome -->
+    <string name="badge_educational">УЧЕБНЫЙ ПРОЕКТ</string>
+    <string name="welcome_title">CreditWise</string>
+    <string name="welcome_subtitle">Оценка кредитного рейтинга и платежеспособности</string>
+    <string name="welcome_how_title">Как это работает</string>
+    <string name="welcome_step_1">1. Перейдите на сайт бюро кредитных историй и посмотрите свой кредитный рейтинг.</string>
+    <string name="welcome_step_2">2. Вернитесь в приложение и укажите это число.</string>
+    <string name="welcome_step_3">3. Загрузите выписку по счёту из СберБанк Онлайн (PDF) за 3 месяца или больше.</string>
+    <string name="welcome_step_4">4. Приложение посчитает простые метрики — средний остаток, регулярность поступлений, долю трат на необходимое — и выведет «индекс благонадёжности» от 0 до 100.</string>
+    <string name="welcome_step_5">5. По желанию — с вашего согласия — учтёт анализ ваших сообщений в Telegram (эффект ограничен ±10 баллами) и покажет расширенный кредитный рейтинг 0–999 с рекомендациями.</string>
+    <string name="welcome_disclaimer">Учебный проект. Не является банковским сервисом и не связан с ПАО Сбербанк. Расчёты носят информационный характер и не являются кредитным решением. Все данные обрабатываются только на вашем устройстве и никуда не передаются.</string>
+    <string name="welcome_open_site">Открыть сайт кредитного рейтинга</string>
+    <string name="welcome_start">Начать</string>
+    <string name="welcome_site_missing">Ссылка на сайт ещё не настроена</string>
+
+    <!-- External rating -->
+    <string name="employment_title">Кто вы?</string>
+    <string name="employment_help">Это помогает точнее настроить порог «регулярности поступлений» под ваш тип дохода.</string>
+    <string name="employment_student_title">Студент</string>
+    <string name="employment_student_desc">Учитываем небольшую или отсутствующую кредитную историю.</string>
+    <string name="employment_freelancer_title">Фрилансер / самозанятый</string>
+    <string name="employment_freelancer_desc">Более мягкий порог для «регулярности поступлений» — доход по природе неровный.</string>
+    <string name="employment_employee_title">Штатный сотрудник</string>
+    <string name="employment_employee_desc">Стандартные условия расчёта регулярности поступлений.</string>
+    <string name="rating_title">Ваш кредитный рейтинг</string>
+    <string name="rating_hint">Рейтинг с сайта (0–999)</string>
+    <string name="rating_help">Введите число, которое показал сайт бюро кредитных историй. Шкала — от 0 до 999.</string>
+    <string name="rating_open_site">Открыть сайт ещё раз</string>
+    <string name="rating_error_range">Введите число от 0 до 999</string>
+    <string name="action_next">Далее</string>
+
+    <!-- Statement upload -->
+    <string name="upload_title">Выписка по счёту</string>
+    <string name="upload_help">Закажите выписку по платёжному счёту в СберБанк Онлайн (раздел «Выписки и справки») в формате PDF за 3 месяца или больше и загрузите файл. Можно добавить несколько выписок — например, если у вас несколько счетов: переводы между вашими счетами не будут учтены как траты и не задвоятся.</string>
+    <string name="upload_pick">Выбрать PDF‑файл(ы)</string>
+    <string name="upload_pick_more">Добавить ещё выписку</string>
+    <string name="upload_parsing">Разбираем выписку…</string>
+    <string name="upload_error">Не удалось разобрать файл. Убедитесь, что это выписка по платёжному счёту из СберБанк Онлайн.</string>
+    <string name="upload_ok">Выписка добавлена</string>
+    <string name="upload_remove">Убрать</string>
+    <string name="upload_statement_row">Выписка %1$d · %2$d операций</string>
+
+    <!-- Analysis -->
+    <string name="analysis_title">Анализ выписки</string>
+    <string name="analysis_period">Период</string>
+    <string name="analysis_income">Средний доход в месяц</string>
+    <string name="analysis_expense">Средний расход в месяц</string>
+    <string name="analysis_fixed">Постоянные расходы</string>
+    <string name="analysis_savings">Норма сбережений</string>
+    <string name="analysis_categories">Расходы по категориям (в месяц)</string>
+    <string name="analysis_recon_title">Сверка с итогами выписки</string>
+    <string name="recon_income_label">Доход за весь период</string>
+    <string name="recon_expense_label">Расход за весь период</string>
+    <string name="recon_value">%1$s — по операциям · %2$s — итог из выписки</string>
+    <string name="recon_value_no_stated">%1$s — по операциям · итог не найден в выписке</string>
+    <string name="recon_warn_diff">Сумма по распознанным операциям заметно отличается от итога в самой выписке — часть строк, возможно, не распозналась.</string>
+    <string name="recon_warn_missing">В выписке не нашлась явная строка «Итого» для сверки — цифры основаны на распознанных операциях напрямую.</string>
+    <string name="analysis_warn_short">Выписка короче 12 месяцев — точность оценки снижена.</string>
+    <string name="analysis_warn_reconcile">Остатки в выписке не полностью сходятся — часть операций могла быть распознана неточно.</string>
+    <string name="analysis_warn_gambling">В выписке есть операции со ставками — это снижает оценку платежеспособности.</string>
+
+    <!-- Tariff -->
+    <string name="tariff_title">Параметры кредита</string>
+    <string name="tariff_sber_offer">Предложение СберБанка (справочно)</string>
+    <string name="tariff_sber_offer_disclaimer">Ориентировочные условия по открытым данным на сентябрь 2026 — не персональное предложение банка. Поля ниже можно отредактировать; актуальные условия уточняйте на сайте банка.</string>
+    <string name="tariff_amount">Сумма кредита, ₽</string>
+    <string name="tariff_term">Срок, месяцев</string>
+    <string name="tariff_rate">Ставка, % годовых</string>
+    <string name="tariff_start">Месяц и год получения</string>
+    <string name="tariff_payment">Ежемесячный платёж</string>
+    <string name="tariff_pti">Платёж к доходу (PTI)</string>
+    <string name="tariff_dti">Долговая нагрузка (DTI)</string>
+    <string name="tariff_calc">Рассчитать рейтинг</string>
+    <string name="tariff_error_fields">Заполните сумму, срок и ставку</string>
+
+    <!-- Telegram flags (optional, informational only) -->
+    <string name="tg_title">Переписки (необязательно)</string>
+    <string name="tg_help">Выгрузите свой архив в Telegram Desktop: «Настройки → Продвинутые настройки → Экспорт данных Telegram», формат JSON. Приложение прочитает только ваши собственные сообщения, найдёт в них упоминания долгов и просрочек и покажет их вам списком.</string>
+    <string name="tg_privacy">Файл никуда не отправляется и не сохраняется — в памяти остаются только найденные фразы, которые вы видите ниже. Эти данные не меняют кредитный рейтинг.</string>
+    <string name="tg_pick">Выбрать файл экспорта (JSON)</string>
+    <string name="tg_parsing">Читаем архив…</string>
+    <string name="tg_error">Не удалось прочитать файл. Нужен result.json из полного экспорта Telegram.</string>
+    <string name="tg_need_full_export">Не удалось определить ваши сообщения. Сделайте полный экспорт аккаунта (не отдельного чата), чтобы анализировались только ваши фразы.</string>
+    <string name="tg_empty">Упоминаний долгов или просрочек в ваших сообщениях не найдено.</string>
+    <string name="tg_summary">Просканировано сообщений: %1$d, из них ваших: %2$d</string>
+    <string name="tg_skip">Пропустить</string>
+    <string name="tg_consent">Разрешаю учитывать анализ моих сообщений в оценке благонадёжности (эффект ограничен ±10 баллами)</string>
+    <string name="tg_consent_hint">Без этой галочки анализ показывается только вам и на балл не влияет.</string>
+    <string name="tg_positive_header">Положительные сигналы</string>
+    <string name="tg_negative_header">Сигналы риска</string>
+    <string name="tg_result_card">Корректировка по Telegram</string>
+    <string name="tg_result_note">Учтено только с вашего согласия; влияние ограничено ±10 баллами и не затрагивает расширенный кредитный рейтинг 0–999.</string>
+    <string name="tg_remove_hint">Нашли фразу не по теме кредитов? Проведите её влево — она перестанет учитываться.</string>
+    <string name="tg_remove_flag">Удалить — не относится к кредитам</string>
+    <string name="tg_removed_toast">Убрано и больше не учитывается</string>
+
+    <!-- Trustworthiness (0–100) -->
+    <string name="trust_title">Индекс благонадёжности</string>
+    <string name="trust_band">%1$s благонадёжность</string>
+    <string name="trust_base">Базовая оценка по выписке</string>
+    <string name="trust_external_buff">Бафф за рейтинг с сайта</string>
+    <string name="trust_quest_buff">Бонус за выполненный квест</string>
+    <string name="trust_adjustment">Корректировка по Telegram</string>
+    <string name="trust_factors">Из чего складывается</string>
+
+    <!-- Loan approval chance -->
+    <string name="approval_title">Шанс одобрения кредита</string>
+    <string name="approval_disclaimer">Упрощённая оценка для ознакомления, не решение банка.</string>
+    <string name="trust_of_100">из 100</string>
+    <string name="trust_extended_show">Показать расширенный расчёт (0–999)</string>
+    <string name="trust_extended_hide">Скрыть расширенный расчёт</string>
+    <string name="trust_extended_title">Расширенный расчёт: кредитный рейтинг 0–999</string>
+    <string name="result_breakdown_title">Разбор балла</string>
+    <string name="section_finance_title">Финансовое поведение</string>
+    <string name="section_risk_title">Риск-факторы</string>
+    <string name="section_site_title">Рейтинг с сайта</string>
+    <string name="section_quest_title">Бонус за задания</string>
+    <string name="section_site_body">Указанный рейтинг с сайта бюро кредитных историй даёт небольшой односторонний бонус — до +%1$d баллов, пропорционально его величине. Низкий рейтинг не отнимает баллы, только не добавляет бонуса.</string>
+    <string name="section_quest_body_none">Бонусных баллов пока нет. Выполните задание на вкладке «Задания», чтобы получить до +%1$d к индексу.</string>
+    <string name="section_quest_body_some">Начислено бонусных баллов за выполненные задания на экономию. Эффект ограничен +%1$d.</string>
+    <string name="result_delta_up">+%1$d балл(ов) с прошлой оценки</string>
+    <string name="result_delta_down">%1$d балл(ов) с прошлой оценки</string>
+    <string name="result_delta_first">Первая оценка</string>
+
+    <!-- Result -->
+    <string name="result_title">Ваш кредитный рейтинг</string>
+    <string name="result_external">Рейтинг с сайта</string>
+    <string name="result_behavior">Оценка по выписке</string>
+    <string name="result_final">Итоговый рейтинг</string>
+    <string name="result_factors">Из чего складывается</string>
+    <string name="result_loan_verdict">Вывод по выбранному кредиту</string>
+    <string name="result_recommendations">Как повысить рейтинг</string>
+    <string name="result_apply_all">Если применить все рекомендации</string>
+    <string name="result_save_home">Сохранить и вернуться на главный экран</string>
+    <string name="result_restart">Не сохранять и выйти</string>
+    <string name="result_delta_score">рейтинг %1$+d</string>
+</resources>

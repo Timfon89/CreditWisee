@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.CreditWise.Step" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+    </style>
+
+    <style name="Widget.CreditWise.MetricRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:baselineAligned">false</item>
+    </style>
+
+    <style name="Widget.CreditWise.MetricLabel" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
+    <style name="Widget.CreditWise.MetricValue" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.CreditWise.Tag" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingHorizontal">8dp</item>
+        <item name="android:paddingVertical">3dp</item>
+        <item name="android:textSize">10.5sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/bg_tag</item>
+    </style>
+
+    <style name="Widget.CreditWise.HomeChip" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_chip_on_gradient</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <style name="Widget.CreditWise.HomeChipLabel" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">10.5sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:alpha">0.85</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Widget.CreditWise.HomeChipValue" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Widget.CreditWise.AccordionHeader" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingVertical">14dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.CreditWise.SectionTitle" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/screen_margin</item>
+        <item name="android:layout_marginEnd">@dimen/screen_margin</item>
+        <item name="android:layout_marginTop">@dimen/gap_l</item>
+        <item name="android:layout_marginBottom">@dimen/gap_s</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

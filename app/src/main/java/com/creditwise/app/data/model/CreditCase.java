@@ -1,0 +1,49 @@
+package com.creditwise.app.data.model;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+/** A saved, completed assessment — one row on the home dashboard and the source for the
+ *  "Разбор балла" tab, which re-displays this snapshot without re-parsing anything. */
+public class CreditCase {
+    public String id = UUID.randomUUID().toString();
+    public LocalDateTime createdAt = LocalDateTime.now();
+
+    public double loanAmount;
+    public int termMonths;
+    public double annualRatePercent;
+
+    public int trustTotal;
+    public String trustBand = "";
+    public int baseScore;
+    public int externalBuff;
+    public int questBuff;
+    public int habitsBuff;
+    public int riskPenalty;
+    public int telegramAdjustment;
+
+    public int approvalPercent;
+    public String approvalBand = ""; // LOW / MEDIUM / HIGH
+
+    /** Biggest discretionary spending category found in the statement — feeds a savings quest
+     *  and the passive spend forecast. */
+    public String topDiscretionaryCategory = "";
+    public double topDiscretionaryMonthlyAmount;
+    public double avgIncome;
+    public double avgExpense;
+
+    public final List<FactorSnapshot> baseFactors = new ArrayList<>();
+    public final List<String> telegramReasons = new ArrayList<>();
+    public final List<String> approvalReasons = new ArrayList<>();
+    public final List<String> habitsReasons = new ArrayList<>();
+    public final List<String> riskReasons = new ArrayList<>();
+
+    public static class FactorSnapshot {
+        public String name = "";
+        public String detail = "";
+        public double value;
+        public int points;
+    }
+}

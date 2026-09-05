@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="28dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/screen_margin"
+            android:layout_marginTop="48dp"
+            android:text="@string/analysis_title"
+            android:textAppearance="@style/Text.Display" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin"
+            android:layout_marginTop="@dimen/gap_m">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/analysis_period" />
+                    <TextView android:id="@+id/tvPeriod" style="@style/Widget.CreditWise.MetricValue" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/analysis_income" />
+                    <TextView android:id="@+id/tvIncome" style="@style/Widget.CreditWise.MetricValue" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/analysis_expense" />
+                    <TextView android:id="@+id/tvExpense" style="@style/Widget.CreditWise.MetricValue" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/analysis_fixed" />
+                    <TextView android:id="@+id/tvFixed" style="@style/Widget.CreditWise.MetricValue" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                    <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/analysis_savings" />
+                    <TextView android:id="@+id/tvSavings" style="@style/Widget.CreditWise.MetricValue" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardWarnings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin"
+            android:layout_marginTop="@dimen/gap_m"
+            android:visibility="gone"
+            app:cardBackgroundColor="?attr/colorErrorContainer">
+
+            <TextView
+                android:id="@+id/tvWarnings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnErrorContainer" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/Widget.CreditWise.SectionTitle"
+            android:text="@string/analysis_recon_title" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:id="@+id/reconContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <TextView
+                    android:id="@+id/tvReconWarning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            style="@style/Widget.CreditWise.SectionTitle"
+            android:text="@string/analysis_categories" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin">
+
+            <com.creditwise.app.ui.DonutChartView
+                android:id="@+id/categoryDonut"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="20dp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/categoryContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_margin"
+            android:orientation="vertical" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNext"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="@dimen/screen_margin"
+            android:layout_marginTop="@dimen/gap_l"
+            android:text="@string/action_next"
+            android:textSize="16sp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

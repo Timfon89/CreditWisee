@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/authFragment">
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.creditwise.app.ui.AuthFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_auth_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/authFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.creditwise.app.ui.HomeFragment"
+        android:label="@string/home_title">
+        <action
+            android:id="@+id/action_home_to_welcome"
+            app:destination="@id/welcomeFragment" />
+        <action
+            android:id="@+id/action_home_to_forecast"
+            app:destination="@id/forecastFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/forecastFragment"
+        android:name="com.creditwise.app.ui.ForecastFragment"
+        android:label="@string/forecast_title" />
+
+    <fragment
+        android:id="@+id/questsFragment"
+        android:name="com.creditwise.app.ui.QuestsFragment"
+        android:label="@string/quests_title">
+        <action
+            android:id="@+id/action_quests_to_habits"
+            app:destination="@id/habitsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/habitsFragment"
+        android:name="com.creditwise.app.ui.HabitsFragment"
+        android:label="@string/habits_title" />
+
+    <fragment
+        android:id="@+id/explainFragment"
+        android:name="com.creditwise.app.ui.ExplainFragment"
+        android:label="@string/explain_title" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.creditwise.app.ui.ProfileFragment"
+        android:label="@string/nav_profile">
+        <action
+            android:id="@+id/action_profile_to_auth"
+            app:destination="@id/authFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.creditwise.app.ui.WelcomeFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_welcome_to_rating"
+            app:destination="@id/employmentFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/employmentFragment"
+        android:name="com.creditwise.app.ui.EmploymentFragment"
+        android:label="@string/employment_title">
+        <action
+            android:id="@+id/action_employment_to_rating"
+            app:destination="@id/externalRatingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/externalRatingFragment"
+        android:name="com.creditwise.app.ui.ExternalRatingFragment"
+        android:label="@string/rating_title">
+        <action
+            android:id="@+id/action_rating_to_upload"
+            app:destination="@id/statementUploadFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/statementUploadFragment"
+        android:name="com.creditwise.app.ui.StatementUploadFragment"
+        android:label="@string/upload_title">
+        <action
+            android:id="@+id/action_upload_to_analysis"
+            app:destination="@id/analysisFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/analysisFragment"
+        android:name="com.creditwise.app.ui.AnalysisFragment"
+        android:label="@string/analysis_title">
+        <action
+            android:id="@+id/action_analysis_to_telegram"
+            app:destination="@id/telegramFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/telegramFragment"
+        android:name="com.creditwise.app.ui.TelegramFragment"
+        android:label="@string/tg_title">
+        <action
+            android:id="@+id/action_telegram_to_tariff"
+            app:destination="@id/tariffFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/tariffFragment"
+        android:name="com.creditwise.app.ui.TariffFragment"
+        android:label="@string/tariff_title">
+        <action
+            android:id="@+id/action_tariff_to_result"
+            app:destination="@id/resultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.creditwise.app.ui.ResultFragment"
+        android:label="@string/result_title">
+        <action
+            android:id="@+id/action_result_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+</navigation>

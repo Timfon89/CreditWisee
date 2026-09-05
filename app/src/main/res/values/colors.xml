@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand: navy + emerald ("serious fintech") -->
+    <color name="brand_navy">#0B1F3A</color>
+    <color name="brand_navy_2">#16345C</color>
+    <color name="brand_navy_dark">#081527</color>
+    <color name="brand_emerald">#0E9D6C</color>
+    <color name="brand_emerald_light">#57C99A</color>
+    <color name="brand_emerald_deep">#087350</color>
+    <color name="brand_emerald_tint">#E5F6EF</color>
+    <color name="brand_violet_tag">#5B2E96</color>
+    <color name="brand_violet_tag_tint">#F1E9FB</color>
+
+    <color name="score_low">#8A3221</color>
+    <color name="score_low_tint">#FBEAE5</color>
+    <color name="score_mid">#B4720A</color>
+    <color name="score_mid_tint">#FBF0DC</color>
+    <color name="score_high">#0E9D6C</color>
+    <color name="score_high_tint">#E5F6EF</color>
+
+    <color name="surface_light">#F4F6F9</color>
+    <color name="surface_sunken_light">#EEF1F5</color>
+    <color name="surface_dark">#0E1520</color>
+    <color name="surface_card_dark">#15202E</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- Categorical chart palette (validated, fixed hue order — see dataviz color-formula) -->
+    <color name="chart_slot_1">#2A78D6</color>
+    <color name="chart_slot_2">#EB6834</color>
+    <color name="chart_slot_3">#1BAF7A</color>
+    <color name="chart_slot_4">#EDA100</color>
+    <color name="chart_slot_5">#E87BA4</color>
+    <color name="chart_slot_6">#008300</color>
+    <color name="chart_slot_7">#4A3AA7</color>
+    <color name="chart_slot_8">#E34948</color>
+    <color name="chart_other">#898781</color>
+</resources>
