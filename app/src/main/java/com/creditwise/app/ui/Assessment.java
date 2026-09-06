@@ -1,5 +1,6 @@
 package com.creditwise.app.ui;
 
+import com.creditwise.app.data.model.ChallengeState;
 import com.creditwise.app.data.model.EmploymentType;
 import com.creditwise.app.data.model.LoanApprovalEstimate;
 import com.creditwise.app.data.model.LoanEvaluation;
@@ -33,4 +34,5 @@ public class Assessment {
     public LoanApprovalEstimate approval;
     public OptimizationEngine.Result optimization;
     public List<String> habitsReasons = new ArrayList<>();
+    public ChallengeState challenges;
 }

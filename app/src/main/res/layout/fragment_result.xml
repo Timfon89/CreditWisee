@@ -145,11 +145,21 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSaveHome"
+            android:id="@+id/btnViewOffers"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginHorizontal="@dimen/screen_margin"
             android:layout_marginTop="@dimen/gap_l"
+            android:text="@string/result_view_offers"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSaveHome"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginHorizontal="@dimen/screen_margin"
+            android:layout_marginTop="@dimen/gap_s"
             android:text="@string/result_save_home"
             android:textSize="16sp" />
 

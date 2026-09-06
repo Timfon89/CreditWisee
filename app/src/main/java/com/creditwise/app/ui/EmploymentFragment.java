@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.creditwise.app.R;
@@ -42,7 +44,15 @@ public class EmploymentFragment extends BaseFragment {
 
         binding.btnNext.setOnClickListener(v -> {
             viewModel().setEmploymentType(requireContext(), selected);
-            NavHostFragment.findNavController(this).navigate(R.id.action_employment_to_rating);
+            NavController nav = NavHostFragment.findNavController(this);
+            NavBackStackEntry prev = nav.getPreviousBackStackEntry();
+            if (prev != null && prev.getDestination().getId() == R.id.profileFragment) {
+                // Reached from Profile to change the answer later — just go back, no reset to home.
+                nav.popBackStack();
+            } else {
+                // Reached during registration — this is the very first thing a new account does.
+                nav.navigate(R.id.action_employment_to_home);
+            }
         });
     }
 

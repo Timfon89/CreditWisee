@@ -3,21 +3,20 @@ package com.creditwise.app.data.local;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.creditwise.app.data.model.ChallengeState;
 import com.creditwise.app.data.model.CreditCase;
 import com.creditwise.app.data.model.EmploymentType;
-import com.creditwise.app.data.model.SavingsQuest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Per-user local storage for saved assessments, the active savings quest and quest bonus points. */
+/** Per-user local storage for saved assessments and ongoing-challenge progress. */
 public final class CreditCaseStore {
 
     private static final String PREFS = "creditwise_cases";
@@ -72,7 +71,7 @@ public final class CreditCaseStore {
             o.put("trustBand", c.trustBand);
             o.put("baseScore", c.baseScore);
             o.put("externalBuff", c.externalBuff);
-            o.put("questBuff", c.questBuff);
+            o.put("challengesBuff", c.challengesBuff);
             o.put("habitsBuff", c.habitsBuff);
             o.put("riskPenalty", c.riskPenalty);
             o.put("telegramAdjustment", c.telegramAdjustment);
@@ -93,10 +92,21 @@ public final class CreditCaseStore {
                 factors.put(fo);
             }
             o.put("baseFactors", factors);
+
+            JSONArray months = new JSONArray();
+            for (CreditCase.MonthPoint mp : c.monthlySeries) {
+                JSONObject mo = new JSONObject();
+                mo.put("label", mp.label);
+                mo.put("income", mp.income);
+                mo.put("expense", mp.expense);
+                months.put(mo);
+            }
+            o.put("monthlySeries", months);
             o.put("telegramReasons", new JSONArray(c.telegramReasons));
             o.put("approvalReasons", new JSONArray(c.approvalReasons));
             o.put("habitsReasons", new JSONArray(c.habitsReasons));
             o.put("riskReasons", new JSONArray(c.riskReasons));
+            o.put("challengesReasons", new JSONArray(c.challengesReasons));
             return o;
         } catch (JSONException e) {
             throw new IllegalStateException(e);
@@ -114,7 +124,7 @@ public final class CreditCaseStore {
         c.trustBand = o.optString("trustBand", "");
         c.baseScore = o.optInt("baseScore", 0);
         c.externalBuff = o.optInt("externalBuff", 0);
-        c.questBuff = o.optInt("questBuff", 0);
+        c.challengesBuff = o.optInt("challengesBuff", o.optInt("questBuff", 0));
         c.habitsBuff = o.optInt("habitsBuff", 0);
         c.riskPenalty = o.optInt("riskPenalty", 0);
         c.telegramAdjustment = o.optInt("telegramAdjustment", 0);
@@ -145,80 +155,73 @@ public final class CreditCaseStore {
         if (hr != null) for (int i = 0; i < hr.length(); i++) c.habitsReasons.add(hr.getString(i));
         JSONArray rr = o.optJSONArray("riskReasons");
         if (rr != null) for (int i = 0; i < rr.length(); i++) c.riskReasons.add(rr.getString(i));
+        JSONArray cr = o.optJSONArray("challengesReasons");
+        if (cr != null) for (int i = 0; i < cr.length(); i++) c.challengesReasons.add(cr.getString(i));
+        JSONArray months = o.optJSONArray("monthlySeries");
+        if (months != null) {
+            for (int i = 0; i < months.length(); i++) {
+                JSONObject mo = months.getJSONObject(i);
+                CreditCase.MonthPoint mp = new CreditCase.MonthPoint();
+                mp.label = mo.optString("label", "");
+                mp.income = mo.optDouble("income", 0);
+                mp.expense = mo.optDouble("expense", 0);
+                c.monthlySeries.add(mp);
+            }
+        }
         return c;
     }
 
-    // ------------------------------------------------------------------ quest
+    // ------------------------------------------------------------ challenges
 
-    public SavingsQuest loadActiveQuest(String email) {
-        String raw = prefs.getString(key(email, "quest"), null);
-        if (raw == null) return null;
+    public ChallengeState loadChallengeState(String email) {
+        ChallengeState s = new ChallengeState();
+        String raw = prefs.getString(key(email, "challenges"), null);
+        if (raw == null) return s;
         try {
             JSONObject o = new JSONObject(raw);
-            SavingsQuest q = new SavingsQuest();
-            q.id = o.getString("id");
-            q.category = o.getString("category");
-            q.baselineMonthlyAmount = o.getDouble("baselineMonthlyAmount");
-            q.startDate = LocalDate.parse(o.getString("startDate"));
-            q.dueDate = LocalDate.parse(o.getString("dueDate"));
-            q.status = SavingsQuest.Status.valueOf(o.getString("status"));
-            return q;
-        } catch (JSONException e) {
-            return null;
+            s.baselineExpense = o.optDouble("baselineExpense", 0);
+            s.baselineMonth = o.optString("baselineMonth", "");
+            s.monthsSinceBaselineReset = o.optInt("monthsSinceBaselineReset", 0);
+            s.savingsPoints = o.optDouble("savingsPoints", 0);
+            s.savingsConsecutiveMisses = o.optInt("savingsConsecutiveMisses", 0);
+            s.regularityPoints = o.optDouble("regularityPoints", 0);
+            s.regularityConsecutiveMisses = o.optInt("regularityConsecutiveMisses", 0);
+            s.lastUpdatedAt = o.optString("lastUpdatedAt", "");
+
+            addAll(o.optJSONArray("savingsHistory"), s.savingsHistory);
+            addAll(o.optJSONArray("regularityHistory"), s.regularityHistory);
+            addAll(o.optJSONArray("processedMonths"), s.processedMonths);
+            addAll(o.optJSONArray("processedWeeks"), s.processedWeeks);
+        } catch (JSONException ignored) {
+            // corrupted local data - start fresh rather than crash
         }
+        return s;
     }
 
-    public void saveQuest(String email, SavingsQuest q) {
+    public void saveChallengeState(String email, ChallengeState s) {
         try {
             JSONObject o = new JSONObject();
-            o.put("id", q.id);
-            o.put("category", q.category);
-            o.put("baselineMonthlyAmount", q.baselineMonthlyAmount);
-            o.put("startDate", q.startDate.toString());
-            o.put("dueDate", q.dueDate.toString());
-            o.put("status", q.status.name());
-            prefs.edit().putString(key(email, "quest"), o.toString()).apply();
+            o.put("baselineExpense", s.baselineExpense);
+            o.put("baselineMonth", s.baselineMonth);
+            o.put("monthsSinceBaselineReset", s.monthsSinceBaselineReset);
+            o.put("savingsPoints", s.savingsPoints);
+            o.put("savingsConsecutiveMisses", s.savingsConsecutiveMisses);
+            o.put("regularityPoints", s.regularityPoints);
+            o.put("regularityConsecutiveMisses", s.regularityConsecutiveMisses);
+            o.put("lastUpdatedAt", s.lastUpdatedAt);
+            o.put("savingsHistory", new JSONArray(s.savingsHistory));
+            o.put("regularityHistory", new JSONArray(s.regularityHistory));
+            o.put("processedMonths", new JSONArray(s.processedMonths));
+            o.put("processedWeeks", new JSONArray(s.processedWeeks));
+            prefs.edit().putString(key(email, "challenges"), o.toString()).apply();
         } catch (JSONException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public void clearQuest(String email) {
-        prefs.edit().remove(key(email, "quest")).apply();
-    }
-
-    // -------------------------------------------------------------- bonus pts
-
-    public int loadBonusPoints(String email) {
-        return prefs.getInt(key(email, "bonus"), 0);
-    }
-
-    public void addBonusPoints(String email, int points) {
-        int total = Math.max(0, Math.min(SavingsQuest.REWARD_POINTS * 5, loadBonusPoints(email) + points));
-        prefs.edit().putInt(key(email, "bonus"), total).apply();
-    }
-
-    // --------------------------------------------------------- quest history
-
-    /** Up to the last 6 {@code "yyyy-MM:SUCCESS"} / {@code "yyyy-MM:MISSED"} entries, oldest first. */
-    public List<String> loadQuestHistory(String email) {
-        List<String> out = new ArrayList<>();
-        try {
-            JSONArray arr = new JSONArray(prefs.getString(key(email, "quest_history"), "[]"));
-            for (int i = 0; i < arr.length(); i++) out.add(arr.getString(i));
-        } catch (JSONException ignored) {
-            // start fresh
-        }
-        return out;
-    }
-
-    public void appendQuestHistory(String email, String monthKey, boolean success) {
-        List<String> history = loadQuestHistory(email);
-        history.add(monthKey + ":" + (success ? "SUCCESS" : "MISSED"));
-        while (history.size() > 6) history.remove(0);
-        JSONArray arr = new JSONArray();
-        for (String h : history) arr.put(h);
-        prefs.edit().putString(key(email, "quest_history"), arr.toString()).apply();
+    private static void addAll(@androidx.annotation.Nullable JSONArray arr, java.util.Collection<String> into) throws JSONException {
+        if (arr == null) return;
+        for (int i = 0; i < arr.length(); i++) into.add(arr.getString(i));
     }
 
     // ---------------------------------------------------------- habits quiz
@@ -258,6 +261,17 @@ public final class CreditCaseStore {
 
     public void saveEmploymentType(String email, EmploymentType type) {
         prefs.edit().putString(key(email, "employment"), type.name()).apply();
+    }
+
+    // -------------------------------------------------------- external bureau rating
+
+    /** {@code -1} if the user has never entered one. */
+    public int loadExternalRating(String email) {
+        return prefs.getInt(key(email, "externalRating"), -1);
+    }
+
+    public void saveExternalRating(String email, int rating) {
+        prefs.edit().putInt(key(email, "externalRating"), rating).apply();
     }
 
     private static String key(String email, String suffix) {

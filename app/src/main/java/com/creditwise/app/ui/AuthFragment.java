@@ -65,7 +65,11 @@ public class AuthFragment extends BaseFragment {
 
         switch (result) {
             case OK:
-                goHome();
+                if (registerMode) {
+                    NavHostFragment.findNavController(this).navigate(R.id.action_auth_to_employment);
+                } else {
+                    goHome();
+                }
                 break;
             case ALREADY_EXISTS:
                 showError(getString(R.string.auth_error_exists));

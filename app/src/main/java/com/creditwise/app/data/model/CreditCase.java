@@ -19,7 +19,7 @@ public class CreditCase {
     public String trustBand = "";
     public int baseScore;
     public int externalBuff;
-    public int questBuff;
+    public int challengesBuff;
     public int habitsBuff;
     public int riskPenalty;
     public int telegramAdjustment;
@@ -27,8 +27,8 @@ public class CreditCase {
     public int approvalPercent;
     public String approvalBand = ""; // LOW / MEDIUM / HIGH
 
-    /** Biggest discretionary spending category found in the statement — feeds a savings quest
-     *  and the passive spend forecast. */
+    /** Biggest discretionary spending category found in the statement — feeds the passive
+     *  spend forecast. */
     public String topDiscretionaryCategory = "";
     public double topDiscretionaryMonthlyAmount;
     public double avgIncome;
@@ -39,11 +39,20 @@ public class CreditCase {
     public final List<String> approvalReasons = new ArrayList<>();
     public final List<String> habitsReasons = new ArrayList<>();
     public final List<String> riskReasons = new ArrayList<>();
+    public final List<String> challengesReasons = new ArrayList<>();
+    public final List<MonthPoint> monthlySeries = new ArrayList<>();
 
     public static class FactorSnapshot {
         public String name = "";
         public String detail = "";
         public double value;
         public int points;
+    }
+
+    /** One month's income/expense, in statement order — feeds the "Динамика по месяцам" chart. */
+    public static class MonthPoint {
+        public String label = "";
+        public double income;
+        public double expense;
     }
 }

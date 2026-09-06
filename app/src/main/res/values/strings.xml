@@ -38,6 +38,7 @@
     <string name="forecast_dominant_warn">«%1$s» — %2$s от дохода за этот период. На индекс это прямо сейчас не влияет, но такая концентрация в необязательной категории обычно снижает «Долю трат на необходимое» при следующей оценке.</string>
     <string name="forecast_dominant_ok">Расходы распределены равномерно, ни одна необязательная категория не выделяется.</string>
     <string name="home_forecast_teaser">Прогноз по темпу трат</string>
+    <string name="home_forecast_teaser_subtitle">На сколько дней хватит остатка</string>
 
     <!-- Explain (score breakdown) tab -->
     <string name="explain_title">Разбор балла</string>
@@ -65,7 +66,7 @@
     <string name="home_chip_index">Последний индекс</string>
     <string name="home_chip_total">Оценок всего</string>
     <string name="home_chip_bonus">Бонус баллов</string>
-    <string name="home_chip_quest">Задание</string>
+    <string name="home_chip_quest">Челленджи</string>
     <string name="home_item_index">Индекс: %1$d</string>
     <string name="home_item_approval">Индекс благонадёжности: %1$d/100</string>
     <string name="home_delete">Удалить эту оценку</string>
@@ -73,18 +74,25 @@
     <string name="home_undo">Отменить</string>
 
     <!-- Quests -->
-    <string name="quests_title">Задания на экономию</string>
-    <string name="quests_help">Приложение находит категорию, где вы тратите больше всего сверх необходимого, и предлагает задание — сократить траты на месяц. Выполните — и получите бонус к индексу благонадёжности.</string>
-    <string name="quests_empty">Сначала загрузите хотя бы одну выписку на вкладке «Мои кредиты» — тогда появится задание.</string>
-    <string name="quests_start">Начать задание</string>
-    <string name="quests_active_title">Активное задание</string>
-    <string name="quests_days_left">Осталось дней: %1$d</string>
-    <string name="quests_verify">Проверить повторной выпиской</string>
-    <string name="quests_verify_help">Загрузите новую выписку за прошедший месяц — приложение сравнит траты по категории «%1$s» до и после.</string>
-    <string name="quests_success">Отлично! Траты на «%1$s» снизились на %2$s — начислен бонус +%3$d к индексу благонадёжности.</string>
-    <string name="quests_failed">Пока не получилось снизить траты на «%1$s» так сильно, как планировалось (цель — минус %2$d%%). Попробуйте ещё раз с новым заданием.</string>
-    <string name="quests_bonus_points">Накоплено бонусных баллов: %1$d (учитывается до +%2$d к индексу)</string>
-    <string name="quests_history_title">История заданий</string>
+    <string name="quests_title">Челленджи</string>
+    <string name="quests_help">Два постоянных челленджа считаются от подтверждённых операций в выписке — не от того, что вы сами отметили. Вместе они дают не больше +%1$d к индексу (для новых пользователей — до +%2$d, чтобы было с чего начать).</string>
+    <string name="quests_empty">Сначала загрузите хотя бы одну выписку на вкладке «Мои кредиты» — тогда появится прогресс по челленджам.</string>
+    <string name="quests_bonus_points">Сейчас начислено: +%1$d из максимум +%2$d к индексу</string>
+
+    <string name="challenge_savings_tag">Челлендж · квартальный</string>
+    <string name="challenge_savings_title">Экономия</string>
+    <string name="challenge_savings_copy_waiting">Загрузите выписку — приложение само определит базовый уровень расходов для сравнения.</string>
+    <string name="challenge_savings_copy_progress">Среднее расходов сравнивается с базой — %1$s/мес, а не с прошлым месяцем: удержать уровень так же ценно, как снизить его ещё сильнее.</string>
+    <string name="challenge_savings_streak">🔥 %1$d мес.</string>
+    <string name="challenge_savings_note">Планка обновляется раз в квартал (каждые 3 учтённых месяца), а не каждый месяц. Пропуск не обнуляет бонус, а плавно снижает его: 1-й пропуск −10%%, 2-й подряд −25%%, 3-й и более −50%%.</string>
+
+    <string name="challenge_regularity_tag">Челлендж · еженедельный</string>
+    <string name="challenge_regularity_title">Регулярность</string>
+    <string name="challenge_regularity_copy">Смотрим на стабильность пополнений по неделям — только подтверждённый доход (зарплата/регулярные переводы), не любые поступления. Для неровного, но реального дохода (например, у фрилансеров) требования мягче — это видно по самой выписке, а не по тому, что вы указали при регистрации.</string>
+    <string name="challenge_regularity_streak">🔥 %1$d нед.</string>
+    <string name="challenge_regularity_note">Как и с «Экономией», пропуск недели снижает бонус плавно, а не обнуляет его.</string>
+
+    <string name="challenge_progress_label">Прогресс к максимуму бонуса</string>
     <string name="quests_habits_title">Анкета о финансовых привычках</string>
     <string name="quests_habits_body">6 вопросов о бюджете, долгах и платёжной дисциплине — 2 минуты. Честные ответы могут добавить или снять до %1$d баллов индекса, с объяснением каждого пункта.</string>
     <string name="quests_habits_start">Пройти анкету</string>
@@ -134,11 +142,11 @@
 
     <!-- Statement upload -->
     <string name="upload_title">Выписка по счёту</string>
-    <string name="upload_help">Закажите выписку по платёжному счёту в СберБанк Онлайн (раздел «Выписки и справки») в формате PDF за 3 месяца или больше и загрузите файл. Можно добавить несколько выписок — например, если у вас несколько счетов: переводы между вашими счетами не будут учтены как траты и не задвоятся.</string>
+    <string name="upload_help">Закажите выписку или справку о движении средств по счёту в приложении вашего банка в формате PDF за 3 месяца или больше и загрузите файл. Поддерживается несколько распространённых форматов. Можно добавить несколько выписок — например, если у вас несколько счетов: переводы между вашими счетами не будут учтены как траты и не задвоятся.</string>
     <string name="upload_pick">Выбрать PDF‑файл(ы)</string>
     <string name="upload_pick_more">Добавить ещё выписку</string>
     <string name="upload_parsing">Разбираем выписку…</string>
-    <string name="upload_error">Не удалось разобрать файл. Убедитесь, что это выписка по платёжному счёту из СберБанк Онлайн.</string>
+    <string name="upload_error">Не удалось разобрать файл. Убедитесь, что это выписка или справка о движении средств по счёту, а не другой документ.</string>
     <string name="upload_ok">Выписка добавлена</string>
     <string name="upload_remove">Убрать</string>
     <string name="upload_statement_row">Выписка %1$d · %2$d операций</string>
@@ -151,6 +159,7 @@
     <string name="analysis_fixed">Постоянные расходы</string>
     <string name="analysis_savings">Норма сбережений</string>
     <string name="analysis_categories">Расходы по категориям (в месяц)</string>
+    <string name="analysis_trend_title">Динамика по месяцам</string>
     <string name="analysis_recon_title">Сверка с итогами выписки</string>
     <string name="recon_income_label">Доход за весь период</string>
     <string name="recon_expense_label">Расход за весь период</string>
@@ -196,6 +205,8 @@
     <string name="tg_remove_hint">Нашли фразу не по теме кредитов? Проведите её влево — она перестанет учитываться.</string>
     <string name="tg_remove_flag">Удалить — не относится к кредитам</string>
     <string name="tg_removed_toast">Убрано и больше не учитывается</string>
+    <string name="tg_show_more">Остальные сообщения ниже (%1$d)</string>
+    <string name="tg_show_less">Свернуть</string>
 
     <!-- Trustworthiness (0–100) -->
     <string name="trust_title">Индекс благонадёжности</string>
@@ -217,10 +228,8 @@
     <string name="section_finance_title">Финансовое поведение</string>
     <string name="section_risk_title">Риск-факторы</string>
     <string name="section_site_title">Рейтинг с сайта</string>
-    <string name="section_quest_title">Бонус за задания</string>
+    <string name="section_challenges_title">Экономия и Регулярность</string>
     <string name="section_site_body">Указанный рейтинг с сайта бюро кредитных историй даёт небольшой односторонний бонус — до +%1$d баллов, пропорционально его величине. Низкий рейтинг не отнимает баллы, только не добавляет бонуса.</string>
-    <string name="section_quest_body_none">Бонусных баллов пока нет. Выполните задание на вкладке «Задания», чтобы получить до +%1$d к индексу.</string>
-    <string name="section_quest_body_some">Начислено бонусных баллов за выполненные задания на экономию. Эффект ограничен +%1$d.</string>
     <string name="result_delta_up">+%1$d балл(ов) с прошлой оценки</string>
     <string name="result_delta_down">%1$d балл(ов) с прошлой оценки</string>
     <string name="result_delta_first">Первая оценка</string>
@@ -237,4 +246,43 @@
     <string name="result_save_home">Сохранить и вернуться на главный экран</string>
     <string name="result_restart">Не сохранять и выйти</string>
     <string name="result_delta_score">рейтинг %1$+d</string>
+    <string name="result_view_offers">Смотреть кредитные предложения</string>
+
+    <!-- Credit offers tab -->
+    <string name="offers_title">Кредитные предложения</string>
+    <string name="offers_score_line">Ваш индекс благонадёжности: %1$d/100</string>
+    <string name="offers_empty_title">Пока нет доступных предложений</string>
+    <string name="offers_empty_body">Ни один из партнёров в этом демо-каталоге не рассматривает заявки при индексе ниже %1$d. Повышайте индекс, выполняя челленджи «Экономия» и «Регулярность» и контролируя расходы — предложения появятся сами.</string>
+    <string name="offers_go_challenges">Перейти к челленджам</string>
+    <string name="offers_eligible_title">Готовы выдать кредит</string>
+    <string name="offers_ineligible_title">Пока недоступны</string>
+    <string name="offers_none_eligible">При текущем индексе ни один из партнёров пока не готов — смотрите, сколько баллов не хватает, ниже.</string>
+    <string name="offers_terms">До %1$s · до %2$d мес. · от %3$s%% годовых</string>
+    <string name="offers_ready_note">По условиям каталога заявка при этом индексе была бы одобрена.</string>
+    <string name="offers_missing_note">Порог этого партнёра — %1$d/100. Не хватает %2$d балл(ов).</string>
+    <string name="offers_badge_ready">100%</string>
+    <string name="offers_badge_locked">Заблокировано</string>
+    <string name="offers_disclaimer">Демонстрационный каталог с иллюстративными условиями для учебного проекта — это не реальные банки или МФО и не персональное решение о выдаче кредита.</string>
+    <string name="home_offers_teaser">Кредитные предложения</string>
+    <string name="home_offers_teaser_subtitle">Кто готов выдать кредит по вашему индексу</string>
+
+    <!-- Quick statement check-in (standalone, outside the wizard) -->
+    <string name="quests_quick_update">Обновить выписку</string>
+    <string name="quick_update_title">Обновить выписку</string>
+    <string name="quick_update_help">Загрузите свежую выписку, чтобы не потерять прогресс в челленджах «Экономия» и «Регулярность» — без повторного прохождения всех шагов оценки. Тип занятости и рейтинг с сайта возьмём из последнего раза.</string>
+    <string name="quick_update_pick">Выбрать файл</string>
+    <string name="quick_update_parsing">Разбираем файл…</string>
+    <string name="quick_update_result_title">Результат</string>
+    <string name="quick_update_score_change">%1$d → %2$d</string>
+    <string name="quick_update_score_up">Индекс вырос на %1$d — челленджи продолжаются.</string>
+    <string name="quick_update_score_down">Индекс снизился на %1$d — но прогресс в челленджах сохранён.</string>
+    <string name="quick_update_unlocked_title">🎉 Открыто новых предложений: %1$d</string>
+    <string name="quick_update_view_offers">Смотреть кредитные предложения</string>
+    <string name="quick_update_done">Готово</string>
+
+    <!-- Weekly reminder notification -->
+    <string name="reminder_channel_name">Напоминания о челленджах</string>
+    <string name="reminder_channel_description">Напоминание обновить выписку, чтобы не терять прогресс в челленджах «Экономия» и «Регулярность».</string>
+    <string name="reminder_notification_title">Пора обновить выписку</string>
+    <string name="reminder_notification_body">Загрузите свежую выписку, чтобы не потерять прогресс в челленджах — это займёт пару минут.</string>
 </resources>

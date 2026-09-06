@@ -13,6 +13,9 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/authFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_auth_to_employment"
+            app:destination="@id/employmentFragment" />
     </fragment>
 
     <fragment
@@ -25,6 +28,9 @@
         <action
             android:id="@+id/action_home_to_forecast"
             app:destination="@id/forecastFragment" />
+        <action
+            android:id="@+id/action_home_to_offers"
+            app:destination="@id/creditOffersFragment" />
     </fragment>
 
     <fragment
@@ -39,6 +45,18 @@
         <action
             android:id="@+id/action_quests_to_habits"
             app:destination="@id/habitsFragment" />
+        <action
+            android:id="@+id/action_quests_to_quick_update"
+            app:destination="@id/quickUpdateFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/quickUpdateFragment"
+        android:name="com.creditwise.app.ui.QuickUpdateFragment"
+        android:label="@string/quick_update_title">
+        <action
+            android:id="@+id/action_quickUpdate_to_offers"
+            app:destination="@id/creditOffersFragment" />
     </fragment>
 
     <fragment
@@ -60,6 +78,9 @@
             app:destination="@id/authFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_profile_to_employment"
+            app:destination="@id/employmentFragment" />
     </fragment>
 
     <fragment
@@ -68,7 +89,7 @@
         android:label="@string/app_name">
         <action
             android:id="@+id/action_welcome_to_rating"
-            app:destination="@id/employmentFragment" />
+            app:destination="@id/externalRatingFragment" />
     </fragment>
 
     <fragment
@@ -76,8 +97,10 @@
         android:name="com.creditwise.app.ui.EmploymentFragment"
         android:label="@string/employment_title">
         <action
-            android:id="@+id/action_employment_to_rating"
-            app:destination="@id/externalRatingFragment" />
+            android:id="@+id/action_employment_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/authFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -134,5 +157,18 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_result_to_offers"
+            app:destination="@id/creditOffersFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/creditOffersFragment"
+        android:name="com.creditwise.app.ui.CreditOffersFragment"
+        android:label="@string/offers_title">
+        <argument
+            android:name="trustTotal"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>

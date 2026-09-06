@@ -28,6 +28,7 @@ import com.creditwise.app.databinding.ItemCategoryRowBinding;
 import com.creditwise.app.databinding.ItemRecommendationBinding;
 import com.creditwise.app.databinding.ItemTrustFactorBinding;
 import com.creditwise.app.databinding.SectionExtendedBinding;
+import com.creditwise.app.domain.ChallengeEngine;
 import com.creditwise.app.domain.HabitsScorer;
 import com.creditwise.app.domain.OptimizationEngine;
 import com.creditwise.app.util.Money;
@@ -58,15 +59,21 @@ public class ResultFragment extends BaseFragment {
         binding.gauge.setRange(TrustworthinessScore.MAX);
 
         binding.btnRestart.setOnClickListener(v -> {
-            viewModel().reset();
+            viewModel().reset(requireContext());
             NavHostFragment.findNavController(this).navigate(R.id.action_result_to_home);
         });
         binding.btnSaveHome.setOnClickListener(v -> saveAndGoHome());
+        binding.btnViewOffers.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putInt("trustTotal", viewModel().data.trust.total);
+            NavHostFragment.findNavController(this).navigate(R.id.action_result_to_offers, args);
+        });
 
         Assessment data = viewModel().data;
         if (data.trust == null) {
             binding.tvBand.setText("—");
             binding.tvDelta.setText("Недостаточно данных. Вернитесь назад и загрузите выписку.");
+            binding.btnViewOffers.setVisibility(View.GONE);
             return;
         }
 
@@ -181,13 +188,14 @@ public class ResultFragment extends BaseFragment {
             tg.addBody(tagRow(SourceTag.Type.TELEGRAM));
         }
 
-        // 4. Savings-quest bonus
-        AccordionSection quest = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
-                getString(R.string.section_quest_title), signed(t.questBuff), false);
-        quest.addBody(textRow(t.questBuff > 0
-                ? getString(R.string.section_quest_body_some, TrustworthinessScore.QUEST_CAP)
-                : getString(R.string.section_quest_body_none, TrustworthinessScore.QUEST_CAP)));
-        quest.addBody(tagRow(SourceTag.Type.APP));
+        // 4. Ongoing challenges — «Экономия» (quarterly) + «Регулярность» (weekly), combined
+        AccordionSection challenges = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
+                getString(R.string.section_challenges_title), signed(t.challengesBuff), false);
+        if (data.challenges != null) {
+            for (String reason : ChallengeEngine.savingsReasons(data.challenges)) challenges.addBody(textRow(reason));
+            for (String reason : ChallengeEngine.regularityReasons(data.challenges)) challenges.addBody(textRow(reason));
+        }
+        challenges.addBody(tagRow(SourceTag.Type.APP));
 
         // 4b. Financial-habits questionnaire (self-reported, optional)
         AccordionSection habits = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
@@ -266,7 +274,11 @@ public class ResultFragment extends BaseFragment {
         c.trustBand = data.trust.band;
         c.baseScore = data.trust.base;
         c.externalBuff = data.trust.externalBuff;
-        c.questBuff = data.trust.questBuff;
+        c.challengesBuff = data.trust.challengesBuff;
+        if (data.challenges != null) {
+            c.challengesReasons.addAll(ChallengeEngine.savingsReasons(data.challenges));
+            c.challengesReasons.addAll(ChallengeEngine.regularityReasons(data.challenges));
+        }
         c.habitsBuff = data.trust.habitsBuff;
         if (data.habitsReasons != null) c.habitsReasons.addAll(data.habitsReasons);
         c.riskPenalty = data.trust.riskPenalty;
@@ -296,13 +308,20 @@ public class ResultFragment extends BaseFragment {
         if (data.analysis != null) {
             c.avgIncome = data.analysis.avgIncome;
             c.avgExpense = data.analysis.avgExpense;
+            for (com.creditwise.app.data.model.MonthlyAggregate m : data.analysis.months) {
+                CreditCase.MonthPoint mp = new CreditCase.MonthPoint();
+                mp.label = TrendChartView.shortRuMonth(m.month);
+                mp.income = m.incomeEffective;
+                mp.expense = m.expenseTotal;
+                c.monthlySeries.add(mp);
+            }
         }
 
         String email = new LocalAuthStore(requireContext()).currentEmail();
         new CreditCaseStore(requireContext()).saveCase(email, c);
 
         binding.btnSaveHome.performHapticFeedback(HapticFeedbackConstants.CONFIRM);
-        viewModel().reset();
+        viewModel().reset(requireContext());
         NavHostFragment.findNavController(this).navigate(R.id.action_result_to_home);
     }
 

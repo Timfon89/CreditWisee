@@ -36,9 +36,22 @@ public final class TransactionClassifier {
 
     // --------------------------------------------------------------- one pass
 
+    // A transfer "to/from a contract number" (no person's name or phone number attached) is the
+    // account holder moving money to their own other product at the same institution — a
+    // savings sub-account, another card, etc. — not income or spending. Distinguishes this from
+    // e.g. "Внешний перевод по номеру телефона +7...", which names an actual recipient.
+    private static final java.util.regex.Pattern OWN_CONTRACT_TRANSFER = java.util.regex.Pattern.compile(
+            "ПЕРЕВОД.*ДОГОВОР");
+
     private void classifyOne(Transaction t) {
         String upper = norm(t.rawDescription + " " + t.bankCategory);
         String cat = t.bankCategory == null ? "" : t.bankCategory.toLowerCase();
+
+        if (OWN_CONTRACT_TRANSFER.matcher(upper).find()) {
+            t.flowType = FlowType.INTERNAL;
+            t.category = ExpenseCategory.OTHER;
+            return;
+        }
 
         if (t.direction == Direction.CREDIT) {
             classifyCredit(t, upper, cat);
@@ -140,7 +153,8 @@ public final class TransactionClassifier {
         for (Transaction t : transactions) {
             if (t.direction != Direction.DEBIT) continue;
             if (t.flowType == FlowType.CASH_OUT || t.flowType == FlowType.GAMBLING) continue;
-            if (t.category == ExpenseCategory.MFO_PAYMENT) continue;
+            if (t.flowType == FlowType.INTERNAL) continue; // own-contract transfer — not spending
+            if (t.category == ExpenseCategory.MFO_PAYMENT) continue; // keep the risk flag visible
             String key = merchantKey(t.rawDescription);
             if (key.length() < 3) continue;
             groups.computeIfAbsent(key, k -> new ArrayList<>()).add(t);

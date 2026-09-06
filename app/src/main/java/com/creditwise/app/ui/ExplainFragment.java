@@ -20,6 +20,7 @@ import com.creditwise.app.databinding.FragmentExplainBinding;
 import com.creditwise.app.databinding.ItemTrustFactorBinding;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 /** Read-only replay of the latest saved assessment's score breakdown — no re-parsing. */
@@ -70,7 +71,34 @@ public class ExplainFragment extends BaseFragment {
         binding.tvBand.setText(getString(R.string.trust_band, c.trustBand));
         binding.tvDate.setText(getString(R.string.explain_date, c.createdAt.format(DF)));
 
+        renderTrend(c);
         renderAccordion(c);
+    }
+
+    /** Same income-vs-expense trend as the live analysis screen, replayed from the saved case. */
+    private void renderTrend(CreditCase c) {
+        boolean hasTrend = c.monthlySeries.size() >= 2;
+        binding.cardTrend.setVisibility(hasTrend ? View.VISIBLE : View.GONE);
+
+        // Whichever card ends up first below the header keeps the "tucked under the gradient"
+        // look; the other gets a normal gap instead of stacking both negative margins.
+        ViewGroup.MarginLayoutParams trendLp = (ViewGroup.MarginLayoutParams) binding.cardTrend.getLayoutParams();
+        ViewGroup.MarginLayoutParams accordionLp = (ViewGroup.MarginLayoutParams) binding.cardAccordion.getLayoutParams();
+        int tuck = -dp(18);
+        int gap = getResources().getDimensionPixelSize(R.dimen.gap_m);
+        trendLp.topMargin = tuck;
+        accordionLp.topMargin = hasTrend ? gap : tuck;
+        binding.cardTrend.setLayoutParams(trendLp);
+        binding.cardAccordion.setLayoutParams(accordionLp);
+
+        if (!hasTrend) return;
+        List<TrendChartView.Point> points = new ArrayList<>();
+        for (CreditCase.MonthPoint mp : c.monthlySeries) {
+            points.add(new TrendChartView.Point(mp.label, (float) mp.income, (float) mp.expense));
+        }
+        int incomeColor = ContextCompat.getColor(requireContext(), R.color.brand_emerald);
+        int expenseColor = ContextCompat.getColor(requireContext(), R.color.chart_slot_2);
+        binding.trendChart.setSeries(points, incomeColor, expenseColor);
     }
 
     private void renderAccordion(CreditCase c) {
@@ -110,12 +138,10 @@ public class ExplainFragment extends BaseFragment {
             tg.addBody(tagRow(SourceTag.Type.TELEGRAM));
         }
 
-        AccordionSection quest = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
-                getString(R.string.section_quest_title), signed(c.questBuff), false);
-        quest.addBody(textRow(c.questBuff > 0
-                ? getString(R.string.section_quest_body_some, TrustworthinessScore.QUEST_CAP)
-                : getString(R.string.section_quest_body_none, TrustworthinessScore.QUEST_CAP)));
-        quest.addBody(tagRow(SourceTag.Type.APP));
+        AccordionSection challenges = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
+                getString(R.string.section_challenges_title), signed(c.challengesBuff), false);
+        for (String reason : c.challengesReasons) challenges.addBody(textRow(reason));
+        challenges.addBody(tagRow(SourceTag.Type.APP));
 
         AccordionSection habits = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
                 getString(R.string.section_habits_title), signed(c.habitsBuff), false);

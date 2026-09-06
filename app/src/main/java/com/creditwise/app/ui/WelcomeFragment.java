@@ -27,7 +27,7 @@ public class WelcomeFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        viewModel().reset();
+        viewModel().reset(requireContext());
 
         binding.btnOpenSite.setOnClickListener(v ->
                 Web.open(requireContext(), getString(R.string.rating_site_url)));

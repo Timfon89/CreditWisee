@@ -75,7 +75,13 @@
                     <TextView android:id="@+id/tvLastIndex" style="@style/Widget.CreditWise.MetricValue" />
                 </LinearLayout>
 
-                <LinearLayout style="@style/Widget.CreditWise.MetricRow" android:orientation="horizontal">
+                <LinearLayout
+                    android:id="@+id/rowEmployment"
+                    style="@style/Widget.CreditWise.MetricRow"
+                    android:orientation="horizontal"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
                     <TextView style="@style/Widget.CreditWise.MetricLabel" android:text="@string/profile_employment" />
                     <TextView
                         android:id="@+id/tvEmployment"
@@ -83,6 +89,13 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="›"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

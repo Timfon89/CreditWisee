@@ -10,6 +10,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
@@ -19,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** A part-to-whole ring chart: rounded, gapped arcs with an animated sweep and a center label. */
+/** A part-to-whole ring chart: rounded, gapped arcs with an animated sweep and a center label.
+ *  Optionally tappable — see {@link #setOnSegmentTapListener}. */
 public class DonutChartView extends View {
 
     public static final class Segment {
@@ -34,6 +36,15 @@ public class DonutChartView extends View {
         }
     }
 
+    /** Called when the user taps a visible slice of the ring. */
+    public interface OnSegmentTapListener {
+        void onSegmentTap(Segment segment);
+    }
+
+    /** Ring thickness as a share of the view's diameter — keeps the "hole" a sensible size
+     *  whether the view is a small 120dp ring or a large 200dp chart, instead of a fixed dp
+     *  stroke that looks thin on bigger instances. */
+    private static final float STROKE_SHARE = 0.13f;
     private static final float GAP_DEGREES = 4f;
     private static final float START_ANGLE = -90f;
 
@@ -42,10 +53,27 @@ public class DonutChartView extends View {
     private final TextPaint bigPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint smallPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final RectF oval = new RectF();
+    private final float density;
 
     private List<Segment> segments = Collections.emptyList();
     // one {startAngle, finalSweep} pair per segment with value > 0, in the same order they appear
     private final List<float[]> arcs = new ArrayList<>();
+    // hit-test data per visible segment, parallel to the loop order in setSegments/onDraw
+    private final List<HitSegment> hitSegments = new ArrayList<>();
+
+    private static final class HitSegment {
+        final Segment segment;
+        final float relStart; // degrees clockwise from START_ANGLE, 0..360
+        final float sweep;    // full slice sweep, not reduced by the gap — easier to tap
+
+        HitSegment(Segment segment, float relStart, float sweep) {
+            this.segment = segment;
+            this.relStart = relStart;
+            this.sweep = sweep;
+        }
+    }
+
+    @Nullable private OnSegmentTapListener tapListener;
 
     private String centerBig = "";
     private String centerSmall = "";
@@ -61,15 +89,13 @@ public class DonutChartView extends View {
 
     public DonutChartView(Context c, @Nullable AttributeSet a) {
         super(c, a);
-        float density = getResources().getDisplayMetrics().density;
+        density = getResources().getDisplayMetrics().density;
 
         trackPaint.setStyle(Paint.Style.STROKE);
-        trackPaint.setStrokeWidth(18 * density);
         trackPaint.setColor(resolveThemeColor(android.R.attr.textColorSecondary, Color.GRAY));
         trackPaint.setAlpha(38);
 
         arcPaint.setStyle(Paint.Style.STROKE);
-        arcPaint.setStrokeWidth(18 * density);
         arcPaint.setStrokeCap(Paint.Cap.ROUND);
 
         bigPaint.setTextAlign(Paint.Align.CENTER);
@@ -80,6 +106,12 @@ public class DonutChartView extends View {
         smallPaint.setTextAlign(Paint.Align.CENTER);
         smallPaint.setTextSize(12 * density);
         smallPaint.setColor(resolveThemeColor(android.R.attr.textColorSecondary, Color.DKGRAY));
+    }
+
+    /** Set to be notified when the user taps a slice — e.g. to show its name somewhere. */
+    public void setOnSegmentTapListener(@Nullable OnSegmentTapListener listener) {
+        tapListener = listener;
+        setClickable(listener != null);
     }
 
     private int resolveThemeColor(int attr, int fallback) {
@@ -124,6 +156,7 @@ public class DonutChartView extends View {
     public void setSegments(List<Segment> newSegments, float explicitTotal) {
         segments = newSegments;
         arcs.clear();
+        hitSegments.clear();
 
         float sum = 0f;
         int visible = 0;
@@ -142,6 +175,7 @@ public class DonutChartView extends View {
                 if (s.value <= 0f) continue;
                 float slice = s.value / total * 360f;
                 arcs.add(new float[]{angle, Math.max(0f, slice - gap)});
+                hitSegments.add(new HitSegment(s, angle - START_ANGLE, slice));
                 angle += slice;
             }
         }
@@ -161,11 +195,52 @@ public class DonutChartView extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        float pad = arcPaint.getStrokeWidth() / 2f + 2f;
+        float stroke = Math.min(w, h) * STROKE_SHARE;
+        trackPaint.setStrokeWidth(stroke);
+        arcPaint.setStrokeWidth(stroke);
+
+        float pad = stroke / 2f + 2f * density;
         float radius = Math.min(w, h) / 2f - pad;
         float cx = w / 2f;
         float cy = h / 2f;
         oval.set(cx - radius, cy - radius, cx + radius, cy + radius);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (tapListener != null && event.getAction() == MotionEvent.ACTION_UP) {
+            handleTap(event.getX(), event.getY());
+            performClick();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
+    }
+
+    private void handleTap(float x, float y) {
+        if (hitSegments.isEmpty()) return;
+        float dx = x - oval.centerX();
+        float dy = y - oval.centerY();
+        float dist = (float) Math.sqrt(dx * dx + dy * dy);
+        float radius = oval.width() / 2f;
+        float strokeHalf = arcPaint.getStrokeWidth() / 2f;
+        float slop = 6f * density;
+        if (dist < radius - strokeHalf - slop || dist > radius + strokeHalf + slop) return;
+
+        float touchAngle = (float) Math.toDegrees(Math.atan2(dy, dx));
+        float rel = touchAngle - START_ANGLE;
+        rel = ((rel % 360f) + 360f) % 360f;
+
+        for (HitSegment hs : hitSegments) {
+            if (rel >= hs.relStart && rel < hs.relStart + hs.sweep) {
+                tapListener.onSegmentTap(hs.segment);
+                return;
+            }
+        }
     }
 
     @Override

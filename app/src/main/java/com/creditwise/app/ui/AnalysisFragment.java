@@ -1,6 +1,7 @@
 package com.creditwise.app.ui;
 
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.creditwise.app.R;
 import com.creditwise.app.data.model.Direction;
 import com.creditwise.app.data.model.ExpenseCategory;
+import com.creditwise.app.data.model.MonthlyAggregate;
 import com.creditwise.app.data.model.ParseResult;
 import com.creditwise.app.data.model.StatementAnalysis;
 import com.creditwise.app.data.model.Transaction;
@@ -75,6 +77,26 @@ public class AnalysisFragment extends BaseFragment {
 
         renderCategories(a);
         renderReconciliation(viewModel().data.statements);
+        renderTrend(a);
+    }
+
+    /** Income vs. expense across each month of the statement — the same figures already averaged
+     *  above, just shown as a series instead of a single number, so trends aren't hidden. */
+    private void renderTrend(StatementAnalysis a) {
+        if (a.months.size() < 2) {
+            binding.cardTrend.setVisibility(View.GONE);
+            return;
+        }
+        binding.cardTrend.setVisibility(View.VISIBLE);
+
+        List<TrendChartView.Point> points = new ArrayList<>();
+        for (MonthlyAggregate m : a.months) {
+            points.add(new TrendChartView.Point(TrendChartView.shortRuMonth(m.month),
+                    (float) m.incomeEffective, (float) m.expenseTotal));
+        }
+        int incomeColor = ContextCompat.getColor(requireContext(), R.color.brand_emerald);
+        int expenseColor = ContextCompat.getColor(requireContext(), R.color.chart_slot_2);
+        binding.trendChart.setSeries(points, incomeColor, expenseColor);
     }
 
     /** Compares what our own classifier found against the bank's own stated period totals —
@@ -180,6 +202,12 @@ public class AnalysisFragment extends BaseFragment {
         }
 
         binding.categoryDonut.setSegments(segments);
+        binding.categoryDonut.setOnSegmentTapListener(segment -> {
+            binding.categoryDonut.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
+            // amount as the big line (always short) and the category name as the small one,
+            // which is the line that safely ellipsizes if the name is long
+            binding.categoryDonut.setCenterText(Money.format(segment.value), segment.label);
+        });
     }
 
     @Override

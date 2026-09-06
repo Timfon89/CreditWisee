@@ -35,8 +35,8 @@ public final class TrustworthinessCalculator {
     private static final double EXTERNAL_RATING_MAX = 999d;
 
     public TrustworthinessScore score(StatementAnalysis a, int externalRating, TelegramScanResult tg,
-                                      boolean consent, int questBonusPoints, int habitsBonusPoints,
-                                      EmploymentType employmentType) {
+                                      boolean consent, double challengesBonusPoints, int habitsBonusPoints,
+                                      EmploymentType employmentType, boolean newUser) {
         TrustworthinessScore s = new TrustworthinessScore();
 
         // Freelancers/self-employed have naturally uneven income — judging them against the
@@ -72,12 +72,13 @@ public final class TrustworthinessCalculator {
 
         s.base = clampScore(pBalance + pRegularity + pEssentials);
         s.externalBuff = externalBuff(externalRating);
-        s.questBuff = Math.max(0, Math.min(TrustworthinessScore.QUEST_CAP, questBonusPoints));
+        int challengesCap = newUser ? TrustworthinessScore.NEW_USER_CHALLENGES_CAP : TrustworthinessScore.CHALLENGES_CAP;
+        s.challengesBuff = (int) Math.round(Math.max(0, Math.min(challengesCap, challengesBonusPoints)));
         s.habitsBuff = Math.max(-TrustworthinessScore.HABITS_CAP,
                 Math.min(TrustworthinessScore.HABITS_CAP, habitsBonusPoints));
         s.adjustment = telegramAdjustment(s, tg, consent);
         s.riskPenalty = riskPenalty(s, a);
-        s.total = clampScore(s.base + s.externalBuff + s.questBuff + s.habitsBuff + s.adjustment + s.riskPenalty);
+        s.total = clampScore(s.base + s.externalBuff + s.challengesBuff + s.habitsBuff + s.adjustment + s.riskPenalty);
         s.band = band(s.total);
         return s;
     }

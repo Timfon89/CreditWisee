@@ -30,6 +30,10 @@ public class TelegramFragment extends BaseFragment {
 
     private FragmentTelegramBinding binding;
     private ActivityResultLauncher<String[]> picker;
+    /** Which categories the user has expanded past the always-visible first message —
+     *  kept across re-renders (e.g. after deleting a flag) so the section doesn't collapse
+     *  on you mid-review. */
+    private final java.util.Set<TelegramFlag.Category> expanded = new java.util.HashSet<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,22 +150,53 @@ public class TelegramFragment extends BaseFragment {
                 if (flag.category == category) categoryFlags.add(flag);
             }
 
-            RecyclerView recycler = new RecyclerView(requireContext());
-            recycler.setLayoutParams(new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
-            recycler.setNestedScrollingEnabled(false);
-            TelegramFlagAdapter flagAdapter = new TelegramFlagAdapter(categoryFlags);
-            recycler.setAdapter(flagAdapter);
-            new ItemTouchHelper(new SwipeToDeleteCallback(requireContext(), position -> {
-                TelegramFlag removed = flagAdapter.removeAt(position);
-                flagAdapter.notifyRemoved(position);
-                scan.removeFlag(removed);
-                Toast.makeText(requireContext(), R.string.tg_removed_toast, Toast.LENGTH_SHORT).show();
-                renderResult(scan);
-            })).attachToRecyclerView(recycler);
-            binding.flagsContainer.addView(recycler);
+            addFlagRecycler(scan, categoryFlags.subList(0, 1));
+
+            if (categoryFlags.size() > 1) {
+                List<TelegramFlag> rest = categoryFlags.subList(1, categoryFlags.size());
+                boolean isExpanded = expanded.contains(category);
+
+                TextView toggle = new TextView(requireContext());
+                toggle.setTextSize(13f);
+                toggle.setPadding(0, dp(6), 0, dp(6));
+                toggle.setTypeface(toggle.getTypeface(), android.graphics.Typeface.BOLD);
+                binding.flagsContainer.addView(toggle);
+
+                RecyclerView restRecycler = addFlagRecycler(scan, rest);
+                restRecycler.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+
+                toggle.setText(isExpanded ? getString(R.string.tg_show_less)
+                        : getString(R.string.tg_show_more, rest.size()));
+                toggle.setOnClickListener(v -> {
+                    boolean nowExpanded = restRecycler.getVisibility() != View.VISIBLE;
+                    restRecycler.setVisibility(nowExpanded ? View.VISIBLE : View.GONE);
+                    toggle.setText(nowExpanded ? getString(R.string.tg_show_less)
+                            : getString(R.string.tg_show_more, rest.size()));
+                    if (nowExpanded) expanded.add(category); else expanded.remove(category);
+                });
+            }
         }
+    }
+
+    /** One swipe-to-delete-enabled list of flags, backed by its own copy so deleting from the
+     *  "rest" recycler doesn't disturb the always-visible first one (and vice versa). */
+    private RecyclerView addFlagRecycler(TelegramScanResult scan, List<TelegramFlag> flags) {
+        RecyclerView recycler = new RecyclerView(requireContext());
+        recycler.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recycler.setNestedScrollingEnabled(false);
+        TelegramFlagAdapter flagAdapter = new TelegramFlagAdapter(flags);
+        recycler.setAdapter(flagAdapter);
+        new ItemTouchHelper(new SwipeToDeleteCallback(requireContext(), position -> {
+            TelegramFlag removed = flagAdapter.removeAt(position);
+            flagAdapter.notifyRemoved(position);
+            scan.removeFlag(removed);
+            Toast.makeText(requireContext(), R.string.tg_removed_toast, Toast.LENGTH_SHORT).show();
+            renderResult(scan);
+        })).attachToRecyclerView(recycler);
+        binding.flagsContainer.addView(recycler);
+        return recycler;
     }
 
     private void goNext() {

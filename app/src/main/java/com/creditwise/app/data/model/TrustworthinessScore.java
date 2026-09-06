@@ -9,7 +9,12 @@ public class TrustworthinessScore {
     public static final int MAX = 100;
     public static final int TELEGRAM_CAP = 10;
     public static final int EXTERNAL_CAP = 10;
-    public static final int QUEST_CAP = 10;
+    /** Combined cap for the two ongoing challenges (Экономия + Регулярность) — kept low on
+     *  purpose so gamification can never outweigh real financial behaviour. */
+    public static final int CHALLENGES_CAP = 12;
+    /** A brand-new user with no challenge history yet gets a slightly higher temporary cap, so
+     *  there's something to work towards from day one instead of a flat, unmovable 0. */
+    public static final int NEW_USER_CHALLENGES_CAP = 15;
     public static final int HABITS_CAP = 10;
     public static final int RISK_CAP = 20;
 
@@ -39,7 +44,8 @@ public class TrustworthinessScore {
 
     public int base;
     public int externalBuff;
-    public int questBuff;
+    /** Combined «Экономия» + «Регулярность» bonus, already capped. */
+    public int challengesBuff;
     public int habitsBuff;
     public int adjustment;
     public int riskPenalty; // <= 0, e.g. МФО/microloan payments found in the statement

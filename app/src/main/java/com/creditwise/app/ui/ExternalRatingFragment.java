@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.creditwise.app.R;
+import com.creditwise.app.data.local.CreditCaseStore;
+import com.creditwise.app.data.local.LocalAuthStore;
 import com.creditwise.app.databinding.FragmentExternalRatingBinding;
 import com.creditwise.app.util.Web;
 
@@ -28,6 +30,10 @@ public class ExternalRatingFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         int existing = viewModel().data.externalRating;
+        if (existing < 0) {
+            String email = new LocalAuthStore(requireContext()).currentEmail();
+            existing = new CreditCaseStore(requireContext()).loadExternalRating(email);
+        }
         if (existing >= 0) binding.etRating.setText(String.valueOf(existing));
 
         binding.btnOpenSite.setOnClickListener(v ->
@@ -40,7 +46,7 @@ public class ExternalRatingFragment extends BaseFragment {
                 return;
             }
             binding.tilRating.setError(null);
-            viewModel().setExternalRating(value);
+            viewModel().setExternalRating(requireContext(), value);
             NavHostFragment.findNavController(this).navigate(R.id.action_rating_to_upload);
         });
     }

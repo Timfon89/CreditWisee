@@ -1,8 +1,10 @@
 package com.creditwise.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.navigation.NavController;
@@ -17,6 +19,12 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
+    /** Set on the launch intent by {@link com.creditwise.app.work.ChallengeReminderNotifier} to
+     *  open the standalone statement check-in screen directly, bypassing the onboarding wizard. */
+    public static final String EXTRA_OPEN_QUICK_UPDATE = "open_quick_update";
+
+    private NavController navController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(navHostView.getId());
         if (navHostFragment == null) return;
-        NavController navController = navHostFragment.getNavController();
+        navController = navHostFragment.getNavController();
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
         NavigationUI.setupWithNavController(bottomNav, navController);
@@ -38,5 +46,22 @@ public class MainActivity extends AppCompatActivity {
         navController.addOnDestinationChangedListener((controller, destination, arguments) ->
                 bottomNav.setVisibility(tabDestinations.contains(destination.getId())
                         ? View.VISIBLE : View.GONE));
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(@Nullable Intent intent) {
+        if (navController == null || intent == null) return;
+        if (intent.getBooleanExtra(EXTRA_OPEN_QUICK_UPDATE, false)) {
+            intent.removeExtra(EXTRA_OPEN_QUICK_UPDATE);
+            navController.navigate(R.id.quickUpdateFragment);
+        }
     }
 }

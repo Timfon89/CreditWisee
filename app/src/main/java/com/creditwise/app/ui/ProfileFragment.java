@@ -40,6 +40,8 @@ public class ProfileFragment extends BaseFragment {
             new LocalAuthStore(requireContext()).logout();
             NavHostFragment.findNavController(this).navigate(R.id.action_profile_to_auth);
         });
+        binding.rowEmployment.setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.action_profile_to_employment));
 
         setUpThemeToggle();
     }
@@ -74,7 +76,8 @@ public class ProfileFragment extends BaseFragment {
         if (binding == null) return;
         String email = new LocalAuthStore(requireContext()).currentEmail();
         List<CreditCase> cases = new CreditCaseStore(requireContext()).loadCases(email);
-        int bonus = new CreditCaseStore(requireContext()).loadBonusPoints(email);
+        int bonus = (int) Math.round(new CreditCaseStore(requireContext())
+                .loadChallengeState(email).combinedPoints());
 
         String safeEmail = email == null ? "" : email;
         String initials = safeEmail.length() >= 2
