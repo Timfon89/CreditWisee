@@ -44,27 +44,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/gap_m"
-        android:text="@string/result_loan_verdict"
-        android:textAppearance="?attr/textAppearanceTitleSmall"
-        android:textStyle="bold" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="?attr/colorSurface">
-
-        <TextView
-            android:id="@+id/tvLoanVerdict"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:lineSpacingMultiplier="1.15"
-            android:textAppearance="?attr/textAppearanceBodyLarge" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/gap_m"
         android:text="@string/result_recommendations"
         android:textAppearance="?attr/textAppearanceTitleSmall"
         android:textStyle="bold" />

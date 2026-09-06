@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import com.creditwise.app.data.model.ChallengeState;
 import com.creditwise.app.data.model.CreditCase;
 import com.creditwise.app.data.model.EmploymentType;
+import com.creditwise.app.domain.TelegramScoring;
+import com.creditwise.app.data.model.TrustworthinessScore;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,9 +66,6 @@ public final class CreditCaseStore {
             JSONObject o = new JSONObject();
             o.put("id", c.id);
             o.put("createdAt", c.createdAt.toString());
-            o.put("loanAmount", c.loanAmount);
-            o.put("termMonths", c.termMonths);
-            o.put("annualRatePercent", c.annualRatePercent);
             o.put("trustTotal", c.trustTotal);
             o.put("trustBand", c.trustBand);
             o.put("baseScore", c.baseScore);
@@ -75,8 +74,6 @@ public final class CreditCaseStore {
             o.put("habitsBuff", c.habitsBuff);
             o.put("riskPenalty", c.riskPenalty);
             o.put("telegramAdjustment", c.telegramAdjustment);
-            o.put("approvalPercent", c.approvalPercent);
-            o.put("approvalBand", c.approvalBand);
             o.put("topDiscretionaryCategory", c.topDiscretionaryCategory);
             o.put("topDiscretionaryMonthlyAmount", c.topDiscretionaryMonthlyAmount);
             o.put("avgIncome", c.avgIncome);
@@ -103,7 +100,6 @@ public final class CreditCaseStore {
             }
             o.put("monthlySeries", months);
             o.put("telegramReasons", new JSONArray(c.telegramReasons));
-            o.put("approvalReasons", new JSONArray(c.approvalReasons));
             o.put("habitsReasons", new JSONArray(c.habitsReasons));
             o.put("riskReasons", new JSONArray(c.riskReasons));
             o.put("challengesReasons", new JSONArray(c.challengesReasons));
@@ -117,9 +113,6 @@ public final class CreditCaseStore {
         CreditCase c = new CreditCase();
         c.id = o.getString("id");
         c.createdAt = LocalDateTime.parse(o.getString("createdAt"));
-        c.loanAmount = o.getDouble("loanAmount");
-        c.termMonths = o.getInt("termMonths");
-        c.annualRatePercent = o.getDouble("annualRatePercent");
         c.trustTotal = o.getInt("trustTotal");
         c.trustBand = o.optString("trustBand", "");
         c.baseScore = o.optInt("baseScore", 0);
@@ -128,8 +121,6 @@ public final class CreditCaseStore {
         c.habitsBuff = o.optInt("habitsBuff", 0);
         c.riskPenalty = o.optInt("riskPenalty", 0);
         c.telegramAdjustment = o.optInt("telegramAdjustment", 0);
-        c.approvalPercent = o.optInt("approvalPercent", 0);
-        c.approvalBand = o.optString("approvalBand", "");
         c.topDiscretionaryCategory = o.optString("topDiscretionaryCategory", "");
         c.topDiscretionaryMonthlyAmount = o.optDouble("topDiscretionaryMonthlyAmount", 0);
         c.avgIncome = o.optDouble("avgIncome", 0);
@@ -149,8 +140,6 @@ public final class CreditCaseStore {
         }
         JSONArray tg = o.optJSONArray("telegramReasons");
         if (tg != null) for (int i = 0; i < tg.length(); i++) c.telegramReasons.add(tg.getString(i));
-        JSONArray ar = o.optJSONArray("approvalReasons");
-        if (ar != null) for (int i = 0; i < ar.length(); i++) c.approvalReasons.add(ar.getString(i));
         JSONArray hr = o.optJSONArray("habitsReasons");
         if (hr != null) for (int i = 0; i < hr.length(); i++) c.habitsReasons.add(hr.getString(i));
         JSONArray rr = o.optJSONArray("riskReasons");
@@ -272,6 +261,57 @@ public final class CreditCaseStore {
 
     public void saveExternalRating(String email, int rating) {
         prefs.edit().putInt(key(email, "externalRating"), rating).apply();
+    }
+
+    // -------------------------------------------------------- Telegram adjustment
+
+    /** {@code null} if the user has never connected (or has since cleared) a Telegram export. */
+    @androidx.annotation.Nullable
+    public TelegramScoring.Result loadTelegramAdjustment(String email) {
+        String raw = prefs.getString(key(email, "telegram"), null);
+        if (raw == null) return null;
+        try {
+            JSONObject o = new JSONObject(raw);
+            TelegramScoring.Result r = new TelegramScoring.Result();
+            r.delta = o.optInt("delta", 0);
+            r.note = o.optString("note", "");
+            r.applied = o.optBoolean("applied", false);
+            JSONArray reasons = o.optJSONArray("reasons");
+            if (reasons != null) {
+                for (int i = 0; i < reasons.length(); i++) {
+                    JSONObject ro = reasons.getJSONObject(i);
+                    r.reasons.add(new TrustworthinessScore.Adjustment(
+                            ro.optString("label", ""), ro.optInt("points", 0)));
+                }
+            }
+            return r;
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    public void saveTelegramAdjustment(String email, TelegramScoring.Result r) {
+        try {
+            JSONObject o = new JSONObject();
+            o.put("delta", r.delta);
+            o.put("note", r.note);
+            o.put("applied", r.applied);
+            JSONArray reasons = new JSONArray();
+            for (TrustworthinessScore.Adjustment adj : r.reasons) {
+                JSONObject ro = new JSONObject();
+                ro.put("label", adj.label);
+                ro.put("points", adj.points);
+                reasons.put(ro);
+            }
+            o.put("reasons", reasons);
+            prefs.edit().putString(key(email, "telegram"), o.toString()).apply();
+        } catch (JSONException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public void clearTelegramAdjustment(String email) {
+        prefs.edit().remove(key(email, "telegram")).apply();
     }
 
     private static String key(String email, String suffix) {

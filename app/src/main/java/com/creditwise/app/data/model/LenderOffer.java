@@ -1,10 +1,9 @@
 package com.creditwise.app.data.model;
 
 /**
- * Illustrative lender catalog for the "Кредитные предложения" screen — demo/reference tiers
- * gated purely by the 0–100 trust index, not real financial institutions or live offers
- * (same framing as {@link SberbankLoanOffer}: public-style reference data, not a personalized
- * or binding decision from a real lender).
+ * Illustrative lender catalog shown on the "Кредиты" tab — demo/reference tiers gated purely by
+ * the 0–100 trust index, not real financial institutions or live offers, and not a personalized
+ * or binding decision from a real lender.
  */
 public class LenderOffer {
 

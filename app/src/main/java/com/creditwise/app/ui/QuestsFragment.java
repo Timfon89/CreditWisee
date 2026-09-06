@@ -24,6 +24,7 @@ import com.creditwise.app.data.model.TrustworthinessScore;
 import com.creditwise.app.databinding.FragmentQuestsBinding;
 import com.creditwise.app.domain.ChallengeEngine;
 import com.creditwise.app.domain.HabitsScorer;
+import com.creditwise.app.domain.TelegramScoring;
 import com.creditwise.app.util.Money;
 
 import java.util.List;
@@ -59,6 +60,8 @@ public class QuestsFragment extends BaseFragment {
                 NavHostFragment.findNavController(this).navigate(R.id.action_quests_to_habits));
         binding.btnQuickUpdate.setOnClickListener(v ->
                 NavHostFragment.findNavController(this).navigate(R.id.action_quests_to_quick_update));
+        binding.btnTelegram.setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.action_quests_to_telegram));
     }
 
     @Override
@@ -82,7 +85,28 @@ public class QuestsFragment extends BaseFragment {
 
         renderSavings(state);
         renderRegularity(state);
+        renderTelegram(email);
         renderHabits(email);
+    }
+
+    // ------------------------------------------------------------------ Telegram
+
+    private void renderTelegram(String email) {
+        TelegramScoring.Result adjustment = caseStore.loadTelegramAdjustment(email);
+        if (adjustment == null) {
+            binding.tvTelegramBadge.setText(R.string.challenge_telegram_badge_off);
+            binding.tvTelegramBadge.setTextColor(
+                    ContextCompat.getColor(requireContext(), android.R.color.darker_gray));
+            binding.tvTelegramCopy.setText(R.string.challenge_telegram_copy_off);
+            binding.btnTelegram.setText(R.string.quests_telegram_connect);
+            return;
+        }
+        String signed = (adjustment.delta >= 0 ? "+" : "") + adjustment.delta;
+        binding.tvTelegramBadge.setText(signed);
+        binding.tvTelegramBadge.setTextColor(ContextCompat.getColor(requireContext(),
+                adjustment.delta >= 0 ? R.color.brand_navy : R.color.score_low));
+        binding.tvTelegramCopy.setText(adjustment.note);
+        binding.btnTelegram.setText(R.string.quests_telegram_update);
     }
 
     // ------------------------------------------------------------------ «Экономия»

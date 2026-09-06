@@ -18,34 +18,33 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
 
 import com.creditwise.app.R;
 import com.creditwise.app.data.local.CreditCaseStore;
 import com.creditwise.app.data.local.LocalAuthStore;
 import com.creditwise.app.data.model.ChallengeState;
 import com.creditwise.app.data.model.CreditCase;
-import com.creditwise.app.data.model.ExpenseCategory;
-import com.creditwise.app.databinding.DialogCaseDetailsBinding;
+import com.creditwise.app.data.model.LenderOffer;
 import com.creditwise.app.databinding.FragmentHomeBinding;
-import com.creditwise.app.databinding.ItemDetailRowBinding;
+import com.creditwise.app.databinding.ItemLenderOfferBinding;
 import com.creditwise.app.util.Money;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
+/**
+ * The "Кредиты" tab: a quick summary of the current index, then — the whole point of this
+ * screen since manual loan entry was removed — which of the demo lenders in
+ * {@link LenderOffer#CATALOG} the current 0–100 index already clears, and which still need a
+ * higher score. Below the catalog's lowest threshold there's nothing to show at all, just a
+ * nudge toward the ongoing challenges. Updating the underlying statement happens through the
+ * standalone "Обновить выписку" screen (the FAB), not by re-running the registration wizard.
+ */
 public class HomeFragment extends BaseFragment {
-
-    private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private FragmentHomeBinding binding;
     private LocalAuthStore authStore;
     private CreditCaseStore caseStore;
-    private CreditCaseAdapter adapter;
     private ActivityResultLauncher<String> notificationPermissionLauncher;
 
     @Override
@@ -69,29 +68,16 @@ public class HomeFragment extends BaseFragment {
         caseStore = new CreditCaseStore(requireContext());
         requestNotificationPermissionIfNeeded();
 
-        adapter = new CreditCaseAdapter(this::showDetails);
-        binding.casesRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.casesRecycler.setAdapter(adapter);
-        binding.casesRecycler.setNestedScrollingEnabled(false);
-
-        new ItemTouchHelper(new SwipeToDeleteCallback(requireContext(), this::onSwipeDelete))
-                .attachToRecyclerView(binding.casesRecycler);
-
         binding.fabAdd.setOnClickListener(v -> {
             v.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
-            NavHostFragment.findNavController(this).navigate(R.id.action_home_to_welcome);
+            NavHostFragment.findNavController(this).navigate(R.id.quickUpdateFragment);
         });
         binding.cardForecastTeaser.setOnClickListener(v -> {
             bounce(v);
             NavHostFragment.findNavController(this).navigate(R.id.action_home_to_forecast);
         });
-        binding.cardOffersTeaser.setOnClickListener(v -> {
-            bounce(v);
-            List<CreditCase> cases = caseStore.loadCases(authStore.currentEmail());
-            Bundle args = new Bundle();
-            args.putInt("trustTotal", cases.isEmpty() ? 0 : cases.get(0).trustTotal);
-            NavHostFragment.findNavController(this).navigate(R.id.action_home_to_offers, args);
-        });
+        binding.btnGoChallenges.setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.questsFragment));
     }
 
     /** One-time ask, gated to API 33+ (older versions don't need it) — lets the weekly
@@ -138,95 +124,73 @@ public class HomeFragment extends BaseFragment {
         ChallengeState challenges = caseStore.loadChallengeState(email);
         boolean hasChallengeHistory = !challenges.savingsHistory.isEmpty() || !challenges.regularityHistory.isEmpty();
 
-        binding.chipIndex.setText(cases.isEmpty() ? "—" : String.valueOf(cases.get(0).trustTotal));
+        int trustTotal = cases.isEmpty() ? 0 : cases.get(0).trustTotal;
+        binding.chipIndex.setText(cases.isEmpty() ? "—" : String.valueOf(trustTotal));
         binding.chipTotal.setText(String.valueOf(cases.size()));
         binding.chipBonus.setText("+" + Math.round(challenges.combinedPoints()));
         binding.chipQuest.setText(hasChallengeHistory ? "Есть" : "Нет");
 
-        adapter.submit(cases);
-        binding.emptyState.setVisibility(cases.isEmpty() ? View.VISIBLE : View.GONE);
-        binding.casesRecycler.setVisibility(cases.isEmpty() ? View.GONE : View.VISIBLE);
-
         animateIn(binding.cardForecastTeaser, 0);
-        if (cases.isEmpty()) {
-            binding.cardOffersTeaser.setVisibility(View.GONE);
-        } else {
-            binding.cardOffersTeaser.setVisibility(View.VISIBLE);
-            animateIn(binding.cardOffersTeaser, 90);
-        }
+        renderOffers(trustTotal);
     }
 
-    private void onSwipeDelete(int position) {
-        String email = authStore.currentEmail();
-        CreditCase removed = adapter.removeAt(position);
-        caseStore.deleteCase(email, removed.id);
-        requireView().performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
-
-        Snackbar.make(binding.getRoot(), R.string.home_deleted, Snackbar.LENGTH_LONG)
-                .setAction(R.string.home_undo, v -> {
-                    caseStore.saveCase(email, removed);
-                    render();
-                })
-                .addCallback(new Snackbar.Callback() {
-                    @Override
-                    public void onDismissed(Snackbar transientBottomBar, int event) {
-                        if (binding != null) {
-                            binding.emptyState.setVisibility(adapter.isEmpty() ? View.VISIBLE : View.GONE);
-                            binding.casesRecycler.setVisibility(adapter.isEmpty() ? View.GONE : View.VISIBLE);
-                            binding.chipTotal.setText(String.valueOf(caseStore.loadCases(email).size()));
-                        }
-                    }
-                })
-                .show();
-    }
-
-    private void showDetails(CreditCase c) {
-        DialogCaseDetailsBinding view = DialogCaseDetailsBinding.inflate(LayoutInflater.from(requireContext()));
-
-        int color = ContextCompat.getColor(requireContext(), ApprovalColors.colorRes(c.approvalBand));
-        view.approvalBadge.setBackgroundTintList(ColorStateList.valueOf(color));
-        view.tvApprovalPercent.setText(c.approvalPercent + "%");
-        view.tvLoanAmount.setText(Money.format(c.loanAmount));
-        view.tvLoanTerm.setText(c.termMonths + " мес. · " + c.annualRatePercent + "% годовых");
-
-        addDetailRow(view.rowContainer, "Индекс благонадёжности",
-                c.trustTotal + "/100 · " + c.trustBand.toLowerCase());
-        addDetailRow(view.rowContainer, "Шанс одобрения",
-                c.approvalPercent + "% · " + bandRu(c.approvalBand));
-        addDetailRow(view.rowContainer, "Дата оценки", c.createdAt.format(DF));
-        if (!c.topDiscretionaryCategory.isEmpty()) {
-            addDetailRow(view.rowContainer, "Больше всего сверх необходимого уходит на",
-                    displayName(c.topDiscretionaryCategory) + " · "
-                            + Money.format(c.topDiscretionaryMonthlyAmount) + "/мес.");
+    private void renderOffers(int trustTotal) {
+        boolean anyEligible = trustTotal >= LenderOffer.lowestThreshold();
+        binding.emptyState.setVisibility(anyEligible ? View.GONE : View.VISIBLE);
+        binding.offersContent.setVisibility(anyEligible ? View.VISIBLE : View.GONE);
+        if (!anyEligible) {
+            binding.tvEmptyBody.setText(getString(R.string.offers_empty_body, LenderOffer.lowestThreshold()));
+            return;
         }
 
-        new MaterialAlertDialogBuilder(requireContext())
-                .setView(view.getRoot())
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
-    }
-
-    private void addDetailRow(ViewGroup container, String label, String value) {
-        ItemDetailRowBinding row = ItemDetailRowBinding.inflate(LayoutInflater.from(requireContext()), container, false);
-        row.tvLabel.setText(label);
-        row.tvValue.setText(value);
-        container.addView(row.getRoot());
-    }
-
-    private static String displayName(String enumName) {
-        try {
-            return ExpenseCategory.valueOf(enumName).displayName();
-        } catch (IllegalArgumentException e) {
-            return enumName;
+        binding.eligibleContainer.removeAllViews();
+        binding.ineligibleContainer.removeAllViews();
+        int eligibleCount = 0;
+        for (LenderOffer offer : LenderOffer.CATALOG) {
+            if (offer.isEligible(trustTotal)) {
+                eligibleCount++;
+                binding.eligibleContainer.addView(eligibleRow(offer));
+            } else {
+                binding.ineligibleContainer.addView(ineligibleRow(offer, trustTotal));
+            }
         }
+        binding.tvNoneEligible.setVisibility(eligibleCount == 0 ? View.VISIBLE : View.GONE);
     }
 
-    private static String bandRu(String band) {
-        switch (band) {
-            case "HIGH": return "высокий";
-            case "MEDIUM": return "средний";
-            default: return "низкий";
-        }
+    private View eligibleRow(LenderOffer offer) {
+        ItemLenderOfferBinding row = ItemLenderOfferBinding.inflate(
+                LayoutInflater.from(requireContext()), binding.eligibleContainer, false);
+        row.tvName.setText(offer.name);
+        row.tvType.setText(offer.type);
+        row.tvTerms.setText(getString(R.string.offers_terms, Money.format(offer.maxAmount),
+                offer.maxTermMonths, String.format(Locale.US, "%.1f", offer.annualRatePercent)));
+        row.tvNote.setText(R.string.offers_ready_note);
+        row.tvBadge.setText(R.string.offers_badge_ready);
+        row.tvBadge.setTextColor(ContextCompat.getColor(requireContext(), R.color.score_high));
+        row.tvBadge.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.score_high_tint)));
+        row.progress.setIndicatorColor(ContextCompat.getColor(requireContext(), R.color.score_high));
+        row.progress.setProgress(100);
+        return row.getRoot();
+    }
+
+    private View ineligibleRow(LenderOffer offer, int trustTotal) {
+        ItemLenderOfferBinding row = ItemLenderOfferBinding.inflate(
+                LayoutInflater.from(requireContext()), binding.ineligibleContainer, false);
+        row.tvName.setText(offer.name);
+        row.tvType.setText(offer.type);
+        row.tvTerms.setText(getString(R.string.offers_terms, Money.format(offer.maxAmount),
+                offer.maxTermMonths, String.format(Locale.US, "%.1f", offer.annualRatePercent)));
+        int missing = offer.minTrustScore - trustTotal;
+        row.tvNote.setText(getString(R.string.offers_missing_note, offer.minTrustScore, missing));
+        row.tvBadge.setText(R.string.offers_badge_locked);
+        row.tvBadge.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray));
+        row.tvBadge.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.score_low_tint)));
+        row.progress.setIndicatorColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray));
+        int pct = (int) Math.round(Math.max(0d, Math.min(1d, trustTotal / (double) offer.minTrustScore)) * 100);
+        row.progress.setProgress(pct);
+        return row.getRoot();
     }
 
     @Override

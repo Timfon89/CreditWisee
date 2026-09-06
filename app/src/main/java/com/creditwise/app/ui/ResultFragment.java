@@ -18,7 +18,6 @@ import com.creditwise.app.data.local.CreditCaseStore;
 import com.creditwise.app.data.local.LocalAuthStore;
 import com.creditwise.app.data.model.CreditCase;
 import com.creditwise.app.data.model.ExpenseCategory;
-import com.creditwise.app.data.model.LoanApprovalEstimate;
 import com.creditwise.app.data.model.Recommendation;
 import com.creditwise.app.data.model.ScoreBreakdown;
 import com.creditwise.app.data.model.StatementAnalysis;
@@ -29,7 +28,6 @@ import com.creditwise.app.databinding.ItemRecommendationBinding;
 import com.creditwise.app.databinding.ItemTrustFactorBinding;
 import com.creditwise.app.databinding.SectionExtendedBinding;
 import com.creditwise.app.domain.ChallengeEngine;
-import com.creditwise.app.domain.HabitsScorer;
 import com.creditwise.app.domain.OptimizationEngine;
 import com.creditwise.app.util.Money;
 
@@ -63,22 +61,15 @@ public class ResultFragment extends BaseFragment {
             NavHostFragment.findNavController(this).navigate(R.id.action_result_to_home);
         });
         binding.btnSaveHome.setOnClickListener(v -> saveAndGoHome());
-        binding.btnViewOffers.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-            args.putInt("trustTotal", viewModel().data.trust.total);
-            NavHostFragment.findNavController(this).navigate(R.id.action_result_to_offers, args);
-        });
 
         Assessment data = viewModel().data;
         if (data.trust == null) {
             binding.tvBand.setText("—");
             binding.tvDelta.setText("Недостаточно данных. Вернитесь назад и загрузите выписку.");
-            binding.btnViewOffers.setVisibility(View.GONE);
             return;
         }
 
         renderHeader(data.trust);
-        renderApproval(data.approval);
         renderAccordion(data);
     }
 
@@ -97,38 +88,6 @@ public class ResultFragment extends BaseFragment {
             binding.tvDelta.setText(delta >= 0
                     ? getString(R.string.result_delta_up, delta)
                     : getString(R.string.result_delta_down, delta));
-        }
-    }
-
-    private void renderApproval(@Nullable LoanApprovalEstimate approval) {
-        if (approval == null) return;
-
-        int color;
-        String emoji;
-        switch (approval.band) {
-            case HIGH:
-                color = ContextCompat.getColor(requireContext(), R.color.score_high);
-                emoji = "🟢";
-                break;
-            case MEDIUM:
-                color = ContextCompat.getColor(requireContext(), R.color.score_mid);
-                emoji = "🟡";
-                break;
-            default:
-                color = ContextCompat.getColor(requireContext(), R.color.score_low);
-                emoji = "🔴";
-                break;
-        }
-
-        binding.tvApprovalEmoji.setText(emoji);
-        binding.tvApprovalPercent.setText(approval.probabilityPercent + "%");
-        binding.tvApprovalPercent.setTextColor(color);
-        binding.tvApprovalHeadline.setText(approval.headline);
-        binding.tvApprovalHeadline.setTextColor(color);
-
-        binding.approvalReasonsContainer.removeAllViews();
-        for (String reason : approval.reasons) {
-            binding.approvalReasonsContainer.addView(textRow("•  " + reason));
         }
     }
 
@@ -172,21 +131,16 @@ public class ResultFragment extends BaseFragment {
         site.addBody(textRow(getString(R.string.section_site_body, TrustworthinessScore.EXTERNAL_CAP)));
         site.addBody(tagRow(SourceTag.Type.SITE));
 
-        // 3. Telegram — only if the user went through that step
-        if (data.telegram != null) {
-            AccordionSection tg = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
-                    "Telegram", signed(t.adjustment), false);
-            for (TrustworthinessScore.Adjustment adj : t.adjustments) {
-                tg.addBody(textRow(signed(adj.points) + "  " + adj.label));
-            }
-            if (t.adjustments.isEmpty()) {
-                tg.addBody(textRow("Значимых сигналов для корректировки не найдено."));
-            }
-            if (!t.telegramNote.isEmpty()) {
-                tg.addBody(textRow(t.telegramNote));
-            }
-            tg.addBody(tagRow(SourceTag.Type.TELEGRAM));
+        // 3. Telegram — persisted from "Задания", not tied to this session
+        AccordionSection tg = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
+                "Telegram", signed(t.adjustment), false);
+        for (TrustworthinessScore.Adjustment adj : t.adjustments) {
+            tg.addBody(textRow(signed(adj.points) + "  " + adj.label));
         }
+        if (t.adjustments.isEmpty() && !t.telegramNote.isEmpty()) {
+            tg.addBody(textRow(t.telegramNote));
+        }
+        tg.addBody(tagRow(SourceTag.Type.TELEGRAM));
 
         // 4. Ongoing challenges — «Экономия» (quarterly) + «Регулярность» (weekly), combined
         AccordionSection challenges = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
@@ -240,11 +194,6 @@ public class ResultFragment extends BaseFragment {
             ext.factorContainer.addView(row.getRoot());
         }
 
-        if (data.loanEval != null) {
-            ext.tvLoanVerdict.setText(data.loanEval.verdict);
-            ext.tvLoanVerdict.setTextColor(verdictColor(data.loanEval.level));
-        }
-
         OptimizationEngine.Result opt = data.optimization;
         if (opt != null) {
             for (Recommendation r : opt.items) {
@@ -267,9 +216,6 @@ public class ResultFragment extends BaseFragment {
     private void saveAndGoHome() {
         Assessment data = viewModel().data;
         CreditCase c = new CreditCase();
-        c.loanAmount = data.loan.amount;
-        c.termMonths = data.loan.termMonths;
-        c.annualRatePercent = data.loan.annualRatePercent;
         c.trustTotal = data.trust.total;
         c.trustBand = data.trust.band;
         c.baseScore = data.trust.base;
@@ -294,11 +240,6 @@ public class ResultFragment extends BaseFragment {
         }
         for (TrustworthinessScore.Adjustment adj : data.trust.adjustments) {
             c.telegramReasons.add(signed(adj.points) + "  " + adj.label);
-        }
-        if (data.approval != null) {
-            c.approvalPercent = data.approval.probabilityPercent;
-            c.approvalBand = data.approval.band.name();
-            c.approvalReasons.addAll(data.approval.reasons);
         }
         Map.Entry<ExpenseCategory, Double> top = topDiscretionary(data.analysis);
         if (top != null) {
@@ -390,14 +331,6 @@ public class ResultFragment extends BaseFragment {
 
     private static String signed(int v) {
         return (v >= 0 ? "+" : "") + v;
-    }
-
-    private int verdictColor(int level) {
-        switch (level) {
-            case 0: return ContextCompat.getColor(requireContext(), R.color.score_high);
-            case 1: return ContextCompat.getColor(requireContext(), R.color.score_mid);
-            default: return ContextCompat.getColor(requireContext(), R.color.score_low);
-        }
     }
 
     @Override

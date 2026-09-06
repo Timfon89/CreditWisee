@@ -2,9 +2,6 @@ package com.creditwise.app.ui;
 
 import com.creditwise.app.data.model.ChallengeState;
 import com.creditwise.app.data.model.EmploymentType;
-import com.creditwise.app.data.model.LoanApprovalEstimate;
-import com.creditwise.app.data.model.LoanEvaluation;
-import com.creditwise.app.data.model.LoanOffer;
 import com.creditwise.app.data.model.ParseResult;
 import com.creditwise.app.data.model.ScoreBreakdown;
 import com.creditwise.app.data.model.StatementAnalysis;
@@ -23,15 +20,15 @@ public class Assessment {
     public final List<ParseResult> statements = new ArrayList<>();
     public StatementAnalysis analysis;
     public List<String> transferNotes = new ArrayList<>();
-    public LoanOffer loan = new LoanOffer();
 
+    /** Only populated while reviewing a fresh scan on the "Задания" tab — the resulting
+     *  adjustment is persisted (see {@code CreditCaseStore#saveTelegramAdjustment}) and this
+     *  live scan isn't needed once that's done. */
     public TelegramScanResult telegram;
     public boolean telegramConsent;
 
     public TrustworthinessScore trust;   // primary 0–100 result
     public ScoreBreakdown score;         // extended 0–999 result
-    public LoanEvaluation loanEval;
-    public LoanApprovalEstimate approval;
     public OptimizationEngine.Result optimization;
     public List<String> habitsReasons = new ArrayList<>();
     public ChallengeState challenges;

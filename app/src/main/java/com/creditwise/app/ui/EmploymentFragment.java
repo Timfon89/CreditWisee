@@ -50,8 +50,9 @@ public class EmploymentFragment extends BaseFragment {
                 // Reached from Profile to change the answer later — just go back, no reset to home.
                 nav.popBackStack();
             } else {
-                // Reached during registration — this is the very first thing a new account does.
-                nav.navigate(R.id.action_employment_to_home);
+                // Reached during registration — this is the very first thing a new account does,
+                // continuing straight into the one-time intake (rating → statement → analysis).
+                nav.navigate(R.id.action_employment_to_rating);
             }
         });
     }

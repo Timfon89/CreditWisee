@@ -23,14 +23,8 @@
         android:name="com.creditwise.app.ui.HomeFragment"
         android:label="@string/home_title">
         <action
-            android:id="@+id/action_home_to_welcome"
-            app:destination="@id/welcomeFragment" />
-        <action
             android:id="@+id/action_home_to_forecast"
             app:destination="@id/forecastFragment" />
-        <action
-            android:id="@+id/action_home_to_offers"
-            app:destination="@id/creditOffersFragment" />
     </fragment>
 
     <fragment
@@ -48,16 +42,15 @@
         <action
             android:id="@+id/action_quests_to_quick_update"
             app:destination="@id/quickUpdateFragment" />
+        <action
+            android:id="@+id/action_quests_to_telegram"
+            app:destination="@id/telegramFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/quickUpdateFragment"
         android:name="com.creditwise.app.ui.QuickUpdateFragment"
-        android:label="@string/quick_update_title">
-        <action
-            android:id="@+id/action_quickUpdate_to_offers"
-            app:destination="@id/creditOffersFragment" />
-    </fragment>
+        android:label="@string/quick_update_title" />
 
     <fragment
         android:id="@+id/habitsFragment"
@@ -84,23 +77,12 @@
     </fragment>
 
     <fragment
-        android:id="@+id/welcomeFragment"
-        android:name="com.creditwise.app.ui.WelcomeFragment"
-        android:label="@string/app_name">
-        <action
-            android:id="@+id/action_welcome_to_rating"
-            app:destination="@id/externalRatingFragment" />
-    </fragment>
-
-    <fragment
         android:id="@+id/employmentFragment"
         android:name="com.creditwise.app.ui.EmploymentFragment"
         android:label="@string/employment_title">
         <action
-            android:id="@+id/action_employment_to_home"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/authFragment"
-            app:popUpToInclusive="true" />
+            android:id="@+id/action_employment_to_rating"
+            app:destination="@id/externalRatingFragment" />
     </fragment>
 
     <fragment
@@ -126,27 +108,14 @@
         android:name="com.creditwise.app.ui.AnalysisFragment"
         android:label="@string/analysis_title">
         <action
-            android:id="@+id/action_analysis_to_telegram"
-            app:destination="@id/telegramFragment" />
+            android:id="@+id/action_analysis_to_result"
+            app:destination="@id/resultFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/telegramFragment"
         android:name="com.creditwise.app.ui.TelegramFragment"
-        android:label="@string/tg_title">
-        <action
-            android:id="@+id/action_telegram_to_tariff"
-            app:destination="@id/tariffFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/tariffFragment"
-        android:name="com.creditwise.app.ui.TariffFragment"
-        android:label="@string/tariff_title">
-        <action
-            android:id="@+id/action_tariff_to_result"
-            app:destination="@id/resultFragment" />
-    </fragment>
+        android:label="@string/tg_title" />
 
     <fragment
         android:id="@+id/resultFragment"
@@ -155,20 +124,7 @@
         <action
             android:id="@+id/action_result_to_home"
             app:destination="@id/homeFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="false" />
-        <action
-            android:id="@+id/action_result_to_offers"
-            app:destination="@id/creditOffersFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/creditOffersFragment"
-        android:name="com.creditwise.app.ui.CreditOffersFragment"
-        android:label="@string/offers_title">
-        <argument
-            android:name="trustTotal"
-            app:argType="integer"
-            android:defaultValue="0" />
+            app:popUpTo="@id/authFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

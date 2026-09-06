@@ -151,12 +151,6 @@ public class ExplainFragment extends BaseFragment {
             for (String reason : c.habitsReasons) habits.addBody(textRow(reason));
         }
         habits.addBody(tagRow(SourceTag.Type.APP));
-
-        if (!c.approvalReasons.isEmpty()) {
-            AccordionSection approval = AccordionSection.inflate(binding.accordionContainer, transitionRoot,
-                    getString(R.string.approval_title), c.approvalPercent + "%", false);
-            for (String reason : c.approvalReasons) approval.addBody(textRow("•  " + reason));
-        }
     }
 
     private TextView textRow(String text) {

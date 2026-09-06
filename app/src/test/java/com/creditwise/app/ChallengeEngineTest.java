@@ -136,7 +136,7 @@ public class ChallengeEngineTest {
         assertEquals(2, state.regularityHistory.size()); // week A and week B only; week D held back
         assertTrue(state.regularityHistory.get(0).endsWith(":HIT"));
         assertTrue(state.regularityHistory.get(1).endsWith(":MISS"));
-        assertEquals(0.5, state.regularityPoints, 0.01);
+        assertEquals(0.45, state.regularityPoints, 0.01); // 0.5 hit, then a first miss decays it ×0.90
     }
 
     @Test

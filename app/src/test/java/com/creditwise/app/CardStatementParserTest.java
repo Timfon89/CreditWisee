@@ -15,9 +15,11 @@ import java.time.LocalDate;
 
 public class CardStatementParserTest {
 
-    // Fictional data mirroring the layout of a "funds-movement certificate" style statement:
-    // no per-row balance column, a name line right before the address, and record blocks of
-    // op-date/op-time/proc-date/proc-time/amounts+description(/continuation)/card-suffix.
+    // Fictional data mirroring the layout of a "funds-movement certificate" style statement, as
+    // it actually comes out of PDFBox's positional text extraction: no per-row balance column,
+    // a name line right before the address, and each record as two visual lines — both dates +
+    // both amounts + the description's first word(s) + the card's last 4 digits (or "—" for a
+    // card-less operation) on one line, both times + any description continuation on the next.
     private static final String FIXTURE = String.join("\n",
             "Справка о движении средств",
             "01.01.2026",
@@ -27,24 +29,12 @@ public class CardStatementParserTest {
             "Номер лицевого счета: 40817000000000000000",
             "Сумма доступного остатка на 01.01.2026: 1000.00 ₽",
             "Движение средств за период с 01.01.2025 по 01.01.2026",
-            "15.12.2025",
-            "12:00",
-            "15.12.2025",
-            "12:00",
-            "-500.00 ₽ -500.00 ₽ Оплата в",
-            "TEST SHOP MOSCOW RUS",
-            "1234",
-            "14.12.2025",
-            "09:30",
-            "14.12.2025",
-            "09:31",
-            "+1500.00 ₽ +1500.00 ₽ Пополнение. Система быстрых платежей",
-            "1234",
-            "10.12.2025",
-            "08:00",
-            "10.12.2025",
-            "08:00",
-            "-1.00 ₽ -1.00 ₽ Плата за обслуживание —",
+            "15.12.2025 15.12.2025 -500.00 ₽ -500.00 ₽ Оплата в 1234",
+            "12:00 12:00 TEST SHOP MOSCOW RUS",
+            "14.12.2025 14.12.2025 +1500.00 ₽ +1500.00 ₽ Пополнение. Система быстрых платежей 1234",
+            "09:30 09:31",
+            "10.12.2025 10.12.2025 -1.00 ₽ -1.00 ₽ Плата за обслуживание —",
+            "08:00 08:00",
             "Пополнения: 1500.00 ₽",
             "Расходы: 501.00 ₽");
 

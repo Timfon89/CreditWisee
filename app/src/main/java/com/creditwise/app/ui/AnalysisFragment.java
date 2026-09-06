@@ -52,8 +52,10 @@ public class AnalysisFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         StatementAnalysis a = viewModel().data.analysis;
-        binding.btnNext.setOnClickListener(v ->
-                NavHostFragment.findNavController(this).navigate(R.id.action_analysis_to_telegram));
+        binding.btnNext.setOnClickListener(v -> {
+            viewModel().computeResults(requireContext());
+            NavHostFragment.findNavController(this).navigate(R.id.action_analysis_to_result);
+        });
 
         if (a == null) {
             binding.tvPeriod.setText("—");

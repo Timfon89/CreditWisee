@@ -58,20 +58,14 @@
     <string name="profile_theme_dark">Тёмная</string>
 
     <!-- Home dashboard -->
-    <string name="home_title">Мои кредиты</string>
+    <string name="home_title">Кредиты</string>
     <string name="home_logout">Выйти из аккаунта</string>
-    <string name="home_empty_title">Пока нет ни одной оценки</string>
-    <string name="home_empty_body">Нажмите «+», чтобы загрузить выписку и получить первый индекс благонадёжности.</string>
-    <string name="home_add">Добавить кредит</string>
+    <string name="home_add">Обновить выписку</string>
     <string name="home_chip_index">Последний индекс</string>
     <string name="home_chip_total">Оценок всего</string>
     <string name="home_chip_bonus">Бонус баллов</string>
     <string name="home_chip_quest">Челленджи</string>
     <string name="home_item_index">Индекс: %1$d</string>
-    <string name="home_item_approval">Индекс благонадёжности: %1$d/100</string>
-    <string name="home_delete">Удалить эту оценку</string>
-    <string name="home_deleted">Оценка удалена</string>
-    <string name="home_undo">Отменить</string>
 
     <!-- Quests -->
     <string name="quests_title">Челленджи</string>
@@ -92,6 +86,13 @@
     <string name="challenge_regularity_streak">🔥 %1$d нед.</string>
     <string name="challenge_regularity_note">Как и с «Экономией», пропуск недели снижает бонус плавно, а не обнуляет его.</string>
 
+    <string name="challenge_telegram_tag">Задание · по желанию</string>
+    <string name="challenge_telegram_title">Telegram</string>
+    <string name="challenge_telegram_badge_off">Не подключён</string>
+    <string name="challenge_telegram_copy_off">Загрузите экспорт своего чата — это может немного повысить или понизить балл, в зависимости от того, что реально подтверждается перепиской: упоминания работы, планирования бюджета, просрочек или займов у знакомых. Данные читаются только на устройстве, только с вашего согласия.</string>
+    <string name="quests_telegram_connect">Добавить Telegram-чат</string>
+    <string name="quests_telegram_update">Обновить</string>
+
     <string name="challenge_progress_label">Прогресс к максимуму бонуса</string>
     <string name="quests_habits_title">Анкета о финансовых привычках</string>
     <string name="quests_habits_body">6 вопросов о бюджете, долгах и платёжной дисциплине — 2 минуты. Честные ответы могут добавить или снять до %1$d баллов индекса, с объяснением каждого пункта.</string>
@@ -111,18 +112,9 @@
 
     <!-- Welcome -->
     <string name="badge_educational">УЧЕБНЫЙ ПРОЕКТ</string>
-    <string name="welcome_title">CreditWise</string>
     <string name="welcome_subtitle">Оценка кредитного рейтинга и платежеспособности</string>
-    <string name="welcome_how_title">Как это работает</string>
-    <string name="welcome_step_1">1. Перейдите на сайт бюро кредитных историй и посмотрите свой кредитный рейтинг.</string>
-    <string name="welcome_step_2">2. Вернитесь в приложение и укажите это число.</string>
-    <string name="welcome_step_3">3. Загрузите выписку по счёту из СберБанк Онлайн (PDF) за 3 месяца или больше.</string>
-    <string name="welcome_step_4">4. Приложение посчитает простые метрики — средний остаток, регулярность поступлений, долю трат на необходимое — и выведет «индекс благонадёжности» от 0 до 100.</string>
-    <string name="welcome_step_5">5. По желанию — с вашего согласия — учтёт анализ ваших сообщений в Telegram (эффект ограничен ±10 баллами) и покажет расширенный кредитный рейтинг 0–999 с рекомендациями.</string>
     <string name="welcome_disclaimer">Учебный проект. Не является банковским сервисом и не связан с ПАО Сбербанк. Расчёты носят информационный характер и не являются кредитным решением. Все данные обрабатываются только на вашем устройстве и никуда не передаются.</string>
     <string name="welcome_open_site">Открыть сайт кредитного рейтинга</string>
-    <string name="welcome_start">Начать</string>
-    <string name="welcome_site_missing">Ссылка на сайт ещё не настроена</string>
 
     <!-- External rating -->
     <string name="employment_title">Кто вы?</string>
@@ -171,19 +163,6 @@
     <string name="analysis_warn_reconcile">Остатки в выписке не полностью сходятся — часть операций могла быть распознана неточно.</string>
     <string name="analysis_warn_gambling">В выписке есть операции со ставками — это снижает оценку платежеспособности.</string>
 
-    <!-- Tariff -->
-    <string name="tariff_title">Параметры кредита</string>
-    <string name="tariff_sber_offer">Предложение СберБанка (справочно)</string>
-    <string name="tariff_sber_offer_disclaimer">Ориентировочные условия по открытым данным на сентябрь 2026 — не персональное предложение банка. Поля ниже можно отредактировать; актуальные условия уточняйте на сайте банка.</string>
-    <string name="tariff_amount">Сумма кредита, ₽</string>
-    <string name="tariff_term">Срок, месяцев</string>
-    <string name="tariff_rate">Ставка, % годовых</string>
-    <string name="tariff_start">Месяц и год получения</string>
-    <string name="tariff_payment">Ежемесячный платёж</string>
-    <string name="tariff_pti">Платёж к доходу (PTI)</string>
-    <string name="tariff_dti">Долговая нагрузка (DTI)</string>
-    <string name="tariff_calc">Рассчитать рейтинг</string>
-    <string name="tariff_error_fields">Заполните сумму, срок и ставку</string>
 
     <!-- Telegram flags (optional, informational only) -->
     <string name="tg_title">Переписки (необязательно)</string>
@@ -217,9 +196,6 @@
     <string name="trust_adjustment">Корректировка по Telegram</string>
     <string name="trust_factors">Из чего складывается</string>
 
-    <!-- Loan approval chance -->
-    <string name="approval_title">Шанс одобрения кредита</string>
-    <string name="approval_disclaimer">Упрощённая оценка для ознакомления, не решение банка.</string>
     <string name="trust_of_100">из 100</string>
     <string name="trust_extended_show">Показать расширенный расчёт (0–999)</string>
     <string name="trust_extended_hide">Скрыть расширенный расчёт</string>
@@ -240,17 +216,13 @@
     <string name="result_behavior">Оценка по выписке</string>
     <string name="result_final">Итоговый рейтинг</string>
     <string name="result_factors">Из чего складывается</string>
-    <string name="result_loan_verdict">Вывод по выбранному кредиту</string>
     <string name="result_recommendations">Как повысить рейтинг</string>
     <string name="result_apply_all">Если применить все рекомендации</string>
     <string name="result_save_home">Сохранить и вернуться на главный экран</string>
     <string name="result_restart">Не сохранять и выйти</string>
     <string name="result_delta_score">рейтинг %1$+d</string>
-    <string name="result_view_offers">Смотреть кредитные предложения</string>
 
-    <!-- Credit offers tab -->
-    <string name="offers_title">Кредитные предложения</string>
-    <string name="offers_score_line">Ваш индекс благонадёжности: %1$d/100</string>
+    <!-- Credit offers (Home tab) -->
     <string name="offers_empty_title">Пока нет доступных предложений</string>
     <string name="offers_empty_body">Ни один из партнёров в этом демо-каталоге не рассматривает заявки при индексе ниже %1$d. Повышайте индекс, выполняя челленджи «Экономия» и «Регулярность» и контролируя расходы — предложения появятся сами.</string>
     <string name="offers_go_challenges">Перейти к челленджам</string>
@@ -263,8 +235,6 @@
     <string name="offers_badge_ready">100%</string>
     <string name="offers_badge_locked">Заблокировано</string>
     <string name="offers_disclaimer">Демонстрационный каталог с иллюстративными условиями для учебного проекта — это не реальные банки или МФО и не персональное решение о выдаче кредита.</string>
-    <string name="home_offers_teaser">Кредитные предложения</string>
-    <string name="home_offers_teaser_subtitle">Кто готов выдать кредит по вашему индексу</string>
 
     <!-- Quick statement check-in (standalone, outside the wizard) -->
     <string name="quests_quick_update">Обновить выписку</string>

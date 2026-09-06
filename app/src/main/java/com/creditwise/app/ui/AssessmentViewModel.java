@@ -25,16 +25,14 @@ import com.creditwise.app.domain.AggregationEngine;
 import com.creditwise.app.domain.ChallengeEngine;
 import com.creditwise.app.domain.CreditScoreCalculator;
 import com.creditwise.app.domain.HabitsScorer;
-import com.creditwise.app.domain.LoanApprovalEstimator;
-import com.creditwise.app.domain.LoanCalculator;
 import com.creditwise.app.domain.OptimizationEngine;
 import com.creditwise.app.domain.StatementMerger;
+import com.creditwise.app.domain.TelegramScoring;
 import com.creditwise.app.domain.TrustworthinessCalculator;
 import com.creditwise.app.util.PdfTextExtractor;
 
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -158,11 +156,23 @@ public class AssessmentViewModel extends ViewModel {
         data.telegramConsent = consent;
     }
 
-    public void setLoan(double amount, int termMonths, double annualRatePercent, YearMonth start) {
-        data.loan.amount = amount;
-        data.loan.termMonths = termMonths;
-        data.loan.annualRatePercent = annualRatePercent;
-        data.loan.start = start;
+    /**
+     * Called when the user finishes reviewing their Telegram scan on the "Задания" tab (either
+     * "Далее" with consent given, or "Пропустить"/consent withdrawn). Evaluates the adjustment
+     * once and persists it — every future score computation replays this persisted value rather
+     * than needing the raw export again.
+     */
+    public void finishTelegramReview(Context context) {
+        String email = new LocalAuthStore(context).currentEmail();
+        CreditCaseStore store = new CreditCaseStore(context);
+        if (data.telegramConsent && data.telegram != null) {
+            TelegramScoring.Result r = TelegramScoring.evaluate(data.telegram, true);
+            store.saveTelegramAdjustment(email, r);
+        } else {
+            store.clearTelegramAdjustment(email);
+        }
+        data.telegram = null;
+        telegramStatus.setValue(Status.IDLE);
     }
 
     public void computeResults(Context context) {
@@ -181,24 +191,23 @@ public class AssessmentViewModel extends ViewModel {
         store.saveChallengeState(email, challenges);
         data.challenges = challenges;
 
+        TelegramScoring.Result telegram = store.loadTelegramAdjustment(email);
         data.trust = new TrustworthinessCalculator().score(data.analysis, Math.max(0, data.externalRating),
-                data.telegram, data.telegramConsent, challenges.combinedPoints(), habitsBonus,
-                data.employmentType, newUser);
+                telegram, challenges.combinedPoints(), habitsBonus, data.employmentType, newUser);
 
         CreditScoreCalculator calc = new CreditScoreCalculator();
         data.score = calc.score(Math.max(0, data.externalRating), data.analysis);
-        data.loanEval = new LoanCalculator().evaluate(data.loan, data.analysis);
         data.optimization = new OptimizationEngine(calc)
                 .build(Math.max(0, data.externalRating), data.analysis, data.score.finalScore);
-        data.approval = new LoanApprovalEstimator().estimate(data.trust, data.loanEval, data.analysis);
     }
 
     /**
      * Standalone "keep the challenges going" check-in: parses one fresh statement, feeds it into
      * the ongoing {@link ChallengeState} (same idempotent engine as a full assessment), and
      * recomputes the 0–100 index against the persisted employment type / external rating /
-     * habits bonus — without creating a new saved {@link CreditCase}. Used by the standalone
-     * "Обновить выписку" screen reachable from Quests or the reminder notification.
+     * habits bonus / Telegram adjustment — without creating a new saved {@link CreditCase}. Used
+     * by the standalone "Обновить выписку" screen reachable from Quests or the reminder
+     * notification.
      */
     public void quickUpdate(Context context, Uri uri) {
         final Context app = context.getApplicationContext();
@@ -229,10 +238,16 @@ public class AssessmentViewModel extends ViewModel {
                 int habitsBonus = HabitsScorer.score(store.loadHabitsSelections(email));
                 EmploymentType employmentType = store.loadEmploymentType(email);
                 int externalRating = store.loadExternalRating(email);
+                TelegramScoring.Result telegram = store.loadTelegramAdjustment(email);
 
                 TrustworthinessScore trust = new TrustworthinessCalculator().score(analysis,
-                        Math.max(0, externalRating), null, false, challenges.combinedPoints(),
+                        Math.max(0, externalRating), telegram, challenges.combinedPoints(),
                         habitsBonus, employmentType, newUser);
+
+                // Home shows offers gated by the *current* index, so a check-in has to actually
+                // move that needle — save a fresh snapshot the same way a full assessment would.
+                store.saveCase(email, buildCase(trust, analysis, challenges,
+                        HabitsScorer.reasons(store.loadHabitsSelections(email))));
 
                 QuickUpdateResult result = new QuickUpdateResult();
                 result.success = true;
@@ -252,6 +267,48 @@ public class AssessmentViewModel extends ViewModel {
                 quickUpdateStatus.postValue(Status.ERROR);
             }
         });
+    }
+
+    /** Same field population as a full assessment's save, minus the extended 0–999 model (that
+     *  one's never persisted onto {@link CreditCase} even from the full wizard). */
+    private static CreditCase buildCase(TrustworthinessScore trust, StatementAnalysis analysis,
+                                        ChallengeState challenges, List<String> habitsReasons) {
+        CreditCase c = new CreditCase();
+        c.trustTotal = trust.total;
+        c.trustBand = trust.band;
+        c.baseScore = trust.base;
+        c.externalBuff = trust.externalBuff;
+        c.challengesBuff = trust.challengesBuff;
+        c.challengesReasons.addAll(ChallengeEngine.savingsReasons(challenges));
+        c.challengesReasons.addAll(ChallengeEngine.regularityReasons(challenges));
+        c.habitsBuff = trust.habitsBuff;
+        if (habitsReasons != null) c.habitsReasons.addAll(habitsReasons);
+        c.riskPenalty = trust.riskPenalty;
+        c.riskReasons.addAll(trust.riskReasons);
+        c.telegramAdjustment = trust.adjustment;
+        for (TrustworthinessScore.Factor f : trust.factors) {
+            CreditCase.FactorSnapshot fs = new CreditCase.FactorSnapshot();
+            fs.name = f.name;
+            fs.detail = f.detail;
+            fs.value = f.value;
+            fs.points = f.points;
+            c.baseFactors.add(fs);
+        }
+        for (TrustworthinessScore.Adjustment adj : trust.adjustments) {
+            c.telegramReasons.add((adj.points >= 0 ? "+" : "") + adj.points + "  " + adj.label);
+        }
+        if (analysis != null) {
+            c.avgIncome = analysis.avgIncome;
+            c.avgExpense = analysis.avgExpense;
+            for (com.creditwise.app.data.model.MonthlyAggregate m : analysis.months) {
+                CreditCase.MonthPoint mp = new CreditCase.MonthPoint();
+                mp.label = TrendChartView.shortRuMonth(m.month);
+                mp.income = m.incomeEffective;
+                mp.expense = m.expenseTotal;
+                c.monthlySeries.add(mp);
+            }
+        }
+        return c;
     }
 
     public void reset(Context context) {

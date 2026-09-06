@@ -30,7 +30,6 @@ public class QuickUpdateFragment extends BaseFragment {
 
     private FragmentQuickUpdateBinding binding;
     private ActivityResultLauncher<String[]> picker;
-    private int latestTrustTotal;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,11 +56,7 @@ public class QuickUpdateFragment extends BaseFragment {
 
         binding.btnPick.setOnClickListener(v -> picker.launch(new String[]{"application/pdf"}));
         binding.btnDone.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.homeFragment));
-        binding.btnViewOffers.setOnClickListener(v -> {
-            Bundle args = new Bundle();
-            args.putInt("trustTotal", latestTrustTotal);
-            NavHostFragment.findNavController(this).navigate(R.id.action_quickUpdate_to_offers, args);
-        });
+        binding.btnViewOffers.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.homeFragment));
 
         viewModel().quickUpdateStatus().observe(getViewLifecycleOwner(), status -> {
             boolean loading = status == AssessmentViewModel.Status.LOADING;
@@ -84,8 +79,6 @@ public class QuickUpdateFragment extends BaseFragment {
         }
 
         binding.tvStatus.setVisibility(View.GONE);
-        latestTrustTotal = result.trustAfter;
-
         binding.cardResult.setVisibility(View.VISIBLE);
         int delta = result.trustAfter - result.trustBefore;
         binding.tvScoreChange.setText(getString(R.string.quick_update_score_change,

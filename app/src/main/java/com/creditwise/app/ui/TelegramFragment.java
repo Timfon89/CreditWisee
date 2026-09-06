@@ -200,7 +200,8 @@ public class TelegramFragment extends BaseFragment {
     }
 
     private void goNext() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_telegram_to_tariff);
+        viewModel().finishTelegramReview(requireContext());
+        NavHostFragment.findNavController(this).popBackStack();
     }
 
     private int dp(int v) {

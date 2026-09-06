@@ -2,8 +2,6 @@ package com.creditwise.app.domain;
 
 import com.creditwise.app.data.model.EmploymentType;
 import com.creditwise.app.data.model.StatementAnalysis;
-import com.creditwise.app.data.model.TelegramFlag;
-import com.creditwise.app.data.model.TelegramScanResult;
 import com.creditwise.app.data.model.TrustworthinessScore;
 import com.creditwise.app.util.Money;
 
@@ -20,8 +18,9 @@ import com.creditwise.app.util.Money;
  * тому, насколько высок рейтинг (0/999 → +0, 999/999 → +10). Низкий внешний рейтинг никогда
  * не штрафует индекс — только не добавляет бонуса.
  *
- * Telegram adjustment: capped at ±{@link TrustworthinessScore#TELEGRAM_CAP}, applied only with the
- * user's explicit consent and only when their own messages could be isolated. Every ± has a reason.
+ * Telegram adjustment: capped at ±{@link TrustworthinessScore#TELEGRAM_CAP} — pre-computed once
+ * by {@link TelegramScoring} when the user reviews their scan in «Задания», then replayed here
+ * on every future score computation (see {@link TelegramScoring.Result}).
  *
  * Financial-habits questionnaire (self-reported, optional, in "Задания"): capped at
  * ±{@link TrustworthinessScore#HABITS_CAP}. Deliberately about money behaviour only —
@@ -34,8 +33,8 @@ public final class TrustworthinessCalculator {
     private static final double WEIGHT_ESSENTIALS = 30;
     private static final double EXTERNAL_RATING_MAX = 999d;
 
-    public TrustworthinessScore score(StatementAnalysis a, int externalRating, TelegramScanResult tg,
-                                      boolean consent, double challengesBonusPoints, int habitsBonusPoints,
+    public TrustworthinessScore score(StatementAnalysis a, int externalRating, TelegramScoring.Result telegram,
+                                      double challengesBonusPoints, int habitsBonusPoints,
                                       EmploymentType employmentType, boolean newUser) {
         TrustworthinessScore s = new TrustworthinessScore();
 
@@ -76,7 +75,7 @@ public final class TrustworthinessCalculator {
         s.challengesBuff = (int) Math.round(Math.max(0, Math.min(challengesCap, challengesBonusPoints)));
         s.habitsBuff = Math.max(-TrustworthinessScore.HABITS_CAP,
                 Math.min(TrustworthinessScore.HABITS_CAP, habitsBonusPoints));
-        s.adjustment = telegramAdjustment(s, tg, consent);
+        applyTelegram(s, telegram);
         s.riskPenalty = riskPenalty(s, a);
         s.total = clampScore(s.base + s.externalBuff + s.challengesBuff + s.habitsBuff + s.adjustment + s.riskPenalty);
         s.band = band(s.total);
@@ -98,57 +97,15 @@ public final class TrustworthinessCalculator {
         return (int) Math.round((clamped / EXTERNAL_RATING_MAX) * TrustworthinessScore.EXTERNAL_CAP);
     }
 
-    private int telegramAdjustment(TrustworthinessScore s, TelegramScanResult tg, boolean consent) {
-        if (!consent) {
-            s.telegramNote = "Согласие на учёт Telegram не дано — анализ переписок не влияет на балл.";
-            return 0;
+    private void applyTelegram(TrustworthinessScore s, TelegramScoring.Result telegram) {
+        if (telegram == null) {
+            s.telegramNote = "Telegram не подключён — привяжите чат в «Заданиях», чтобы учесть его в балле.";
+            return;
         }
-        if (tg == null || !tg.ownMessagesIdentified) {
-            s.telegramNote = "Не удалось выделить ваши собственные сообщения — Telegram не влияет на балл.";
-            return 0;
-        }
-
-        int work = tg.raw(TelegramFlag.Category.WORK_ACTIVITY);
-        int fin = tg.raw(TelegramFlag.Category.FINANCIAL_LITERACY);
-        int overdue = tg.raw(TelegramFlag.Category.OVERDUE) + tg.raw(TelegramFlag.Category.CREDIT_MFO);
-        int stress = tg.raw(TelegramFlag.Category.STRESS) + tg.raw(TelegramFlag.Category.LOANS_PEOPLE);
-
-        int delta = 0;
-        if (work >= 8) {
-            delta += 6;
-            s.adjustments.add(new TrustworthinessScore.Adjustment(
-                    "Регулярно пишете о работе и проектах — признак стабильной занятости", +6));
-        } else if (work >= 3) {
-            delta += 3;
-            s.adjustments.add(new TrustworthinessScore.Adjustment(
-                    "Периодически упоминаете работу и проекты", +3));
-        }
-        if (fin >= 4) {
-            delta += 4;
-            s.adjustments.add(new TrustworthinessScore.Adjustment(
-                    "Пишете о планировании бюджета и накоплениях", +4));
-        } else if (fin >= 1) {
-            delta += 2;
-            s.adjustments.add(new TrustworthinessScore.Adjustment(
-                    "Встречаются упоминания финансового планирования", +2));
-        }
-        if (overdue >= 1) {
-            delta -= 6;
-            s.adjustments.add(new TrustworthinessScore.Adjustment(
-                    "Упоминания просрочек, кредитов и МФО", -6));
-        }
-        if (stress >= 2) {
-            delta -= 3;
-            s.adjustments.add(new TrustworthinessScore.Adjustment(
-                    "Частые упоминания нехватки денег и займов у людей", -3));
-        }
-
-        delta = Math.max(-TrustworthinessScore.TELEGRAM_CAP,
-                Math.min(TrustworthinessScore.TELEGRAM_CAP, delta));
-        s.telegramApplied = true;
-        s.telegramNote = "Проанализировано ваших сообщений: " + tg.ownMessages
-                + ". Итоговая корректировка ограничена ±" + TrustworthinessScore.TELEGRAM_CAP + ".";
-        return delta;
+        s.adjustment = telegram.delta;
+        s.telegramApplied = telegram.applied;
+        s.telegramNote = telegram.note;
+        s.adjustments.addAll(telegram.reasons);
     }
 
     private static String band(int score) {
