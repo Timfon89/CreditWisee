@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,10 +67,6 @@ public class HomeFragment extends BaseFragment {
         caseStore = new CreditCaseStore(requireContext());
         requestNotificationPermissionIfNeeded();
 
-        binding.fabAdd.setOnClickListener(v -> {
-            v.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
-            NavHostFragment.findNavController(this).navigate(R.id.quickUpdateFragment);
-        });
         binding.cardForecastTeaser.setOnClickListener(v -> {
             bounce(v);
             NavHostFragment.findNavController(this).navigate(R.id.action_home_to_forecast);

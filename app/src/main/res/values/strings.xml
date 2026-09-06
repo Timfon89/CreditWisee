@@ -60,7 +60,6 @@
     <!-- Home dashboard -->
     <string name="home_title">Кредиты</string>
     <string name="home_logout">Выйти из аккаунта</string>
-    <string name="home_add">Обновить выписку</string>
     <string name="home_chip_index">Последний индекс</string>
     <string name="home_chip_total">Оценок всего</string>
     <string name="home_chip_bonus">Бонус баллов</string>
@@ -237,7 +236,7 @@
     <string name="offers_disclaimer">Демонстрационный каталог с иллюстративными условиями для учебного проекта — это не реальные банки или МФО и не персональное решение о выдаче кредита.</string>
 
     <!-- Quick statement check-in (standalone, outside the wizard) -->
-    <string name="quests_quick_update">Обновить выписку</string>
+    <string name="quests_quick_update_compact">↻ Обновить</string>
     <string name="quick_update_title">Обновить выписку</string>
     <string name="quick_update_help">Загрузите свежую выписку, чтобы не потерять прогресс в челленджах «Экономия» и «Регулярность» — без повторного прохождения всех шагов оценки. Тип занятости и рейтинг с сайта возьмём из последнего раза.</string>
     <string name="quick_update_pick">Выбрать файл</string>
