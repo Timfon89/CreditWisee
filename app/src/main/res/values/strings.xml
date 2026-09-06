@@ -39,6 +39,8 @@
     <string name="forecast_dominant_ok">Расходы распределены равномерно, ни одна необязательная категория не выделяется.</string>
     <string name="home_forecast_teaser">Прогноз по темпу трат</string>
     <string name="home_forecast_teaser_subtitle">На сколько дней хватит остатка</string>
+    <string name="home_offers_teaser">Кредитные предложения</string>
+    <string name="home_offers_teaser_subtitle">Кто готов выдать кредит по вашему индексу</string>
 
     <!-- Explain (score breakdown) tab -->
     <string name="explain_title">Разбор балла</string>
@@ -222,6 +224,8 @@
     <string name="result_delta_score">рейтинг %1$+d</string>
 
     <!-- Credit offers (Home tab) -->
+    <string name="offers_title">Кредитные предложения</string>
+    <string name="offers_score_line">Ваш индекс благонадёжности: %1$d/100</string>
     <string name="offers_empty_title">Пока нет доступных предложений</string>
     <string name="offers_empty_body">Ни один из партнёров в этом демо-каталоге не рассматривает заявки при индексе ниже %1$d. Повышайте индекс, выполняя челленджи «Экономия» и «Регулярность» и контролируя расходы — предложения появятся сами.</string>
     <string name="offers_go_challenges">Перейти к челленджам</string>

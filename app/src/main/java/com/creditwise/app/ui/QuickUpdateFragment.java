@@ -56,7 +56,7 @@ public class QuickUpdateFragment extends BaseFragment {
 
         binding.btnPick.setOnClickListener(v -> picker.launch(new String[]{"application/pdf"}));
         binding.btnDone.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.homeFragment));
-        binding.btnViewOffers.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.homeFragment));
+        binding.btnViewOffers.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.creditOffersFragment));
 
         viewModel().quickUpdateStatus().observe(getViewLifecycleOwner(), status -> {
             boolean loading = status == AssessmentViewModel.Status.LOADING;

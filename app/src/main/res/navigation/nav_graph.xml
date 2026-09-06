@@ -25,7 +25,15 @@
         <action
             android:id="@+id/action_home_to_forecast"
             app:destination="@id/forecastFragment" />
+        <action
+            android:id="@+id/action_home_to_offers"
+            app:destination="@id/creditOffersFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/creditOffersFragment"
+        android:name="com.creditwise.app.ui.CreditOffersFragment"
+        android:label="@string/offers_title" />
 
     <fragment
         android:id="@+id/forecastFragment"
